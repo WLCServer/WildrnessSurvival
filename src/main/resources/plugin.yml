@@ -1,0 +1,15 @@
+name: WildrnessSurvival
+version: '${project.version}'
+main: cn.mcbeserver.wildrnesssurvival.WildrnessSurvival
+api-version: 1.19
+authors: [ DongShaoNB ]
+description: WildrnessSurvival
+website: www.dsnbo.cn
+softdepend:
+  - PlaceholderAPI
+
+commands:
+  wildrnesssurvival:
+    description: "WildrnessSurvival Main Command"
+    aliases:
+      - ws

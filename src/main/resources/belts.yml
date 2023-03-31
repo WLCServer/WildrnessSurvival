@@ -1,0 +1,15 @@
+new:
+  material: IRON_INGOT
+  name: "§6§l萌新护身符"
+  enchant: true
+  lore:
+    - ""
+    - " §2萌新的护身符，保佑平平安安"
+    - ""
+    - "§f攻击力 +1"
+    - "§f防御力 +1"
+  optionals:
+    health: 0
+    attack: 1
+    defense: 1
+    speed: 0
