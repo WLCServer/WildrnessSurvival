@@ -1,7 +1,7 @@
 package cn.mcbeserver.wildrnesssurvival.listeners;
 
 import cn.mcbeserver.wildrnesssurvival.WildrnessSurvival;
-import cn.mcbeserver.wildrnesssurvival.utils.PlayerBelt;
+import cn.mcbeserver.wildrnesssurvival.utils.PlayerManager;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -62,8 +62,8 @@ public class InventoryListener implements Listener {
                     }
                 }
             }
-            PlayerBelt.setPlayerBeltsList(player, beltsList);
-            HashMap<String, Integer> playerAttributeList = PlayerBelt.getPlayerAttribute(player);
+            PlayerManager.setBeltsList(player, beltsList);
+            HashMap<String, Integer> playerAttributeList = PlayerManager.getPlayerAttribute(player);
             player.sendMessage(WildrnessSurvival.getPrefix() + "§a你的饰品总属性: ");
             player.sendMessage(WildrnessSurvival.getPrefix() + "§a生命上限 +" + playerAttributeList.get("health"));
             player.sendMessage(WildrnessSurvival.getPrefix() + "§a攻击力 +" + playerAttributeList.get("attack"));

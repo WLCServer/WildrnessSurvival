@@ -1,10 +1,9 @@
 package cn.mcbeserver.wildrnesssurvival.support;
 
 import cn.mcbeserver.wildrnesssurvival.WildrnessSurvival;
-import cn.mcbeserver.wildrnesssurvival.utils.PlayerInfo;
+import cn.mcbeserver.wildrnesssurvival.utils.PlayerManager;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class PlaceholderSupport extends PlaceholderExpansion {
@@ -38,14 +37,13 @@ public class PlaceholderSupport extends PlaceholderExpansion {
     @Override
     public String onRequest(OfflinePlayer player, String parameters) {
         String[] params = parameters.split("_");
-        PlayerInfo playerInfo = new PlayerInfo((Player) player);
 
         if (params[0].equalsIgnoreCase("collect")) {
             switch (params[1]) {
                 case "level":
-                    return String.valueOf(playerInfo.getCollectLevel());
+                    return String.valueOf(PlayerManager.getCollectLevel(player));
                 case "exp":
-                    return String.valueOf(playerInfo.getCollectExp());
+                    return String.valueOf(PlayerManager.getCollectExp(player));
                 default:
                     return null;
             }
@@ -54,9 +52,9 @@ public class PlaceholderSupport extends PlaceholderExpansion {
         if (params[0].equalsIgnoreCase("make")) {
             switch (params[1]) {
                 case "level":
-                    return String.valueOf(playerInfo.getMakeLevel());
+                    return String.valueOf(PlayerManager.getMakeLevel(player));
                 case "exp":
-                    return String.valueOf(playerInfo.getMakeExp());
+                    return String.valueOf(PlayerManager.getMakeExp(player));
                 default:
                     return null;
             }
@@ -65,9 +63,9 @@ public class PlaceholderSupport extends PlaceholderExpansion {
         if (params[0].equalsIgnoreCase("fight")) {
             switch (params[1]) {
                 case "level":
-                    return String.valueOf(playerInfo.getFightLevel());
+                    return String.valueOf(PlayerManager.getFightLevel(player));
                 case "exp":
-                    return String.valueOf(playerInfo.getFightExp());
+                    return String.valueOf(PlayerManager.getFightExp(player));
                 default:
                     return null;
             }

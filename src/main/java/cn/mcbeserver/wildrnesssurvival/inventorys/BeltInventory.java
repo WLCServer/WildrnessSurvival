@@ -1,7 +1,7 @@
 package cn.mcbeserver.wildrnesssurvival.inventorys;
 
 import cn.mcbeserver.wildrnesssurvival.utils.BeltInfo;
-import cn.mcbeserver.wildrnesssurvival.utils.PlayerInfo;
+import cn.mcbeserver.wildrnesssurvival.utils.PlayerManager;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -16,10 +16,8 @@ public class BeltInventory {
     public static void send(Player player) {
 
         Inventory inventory = Bukkit.createInventory(null, 9, "§a§l我的饰品");
-        PlayerInfo playerInfo = new PlayerInfo(player);
 
-        if (!playerInfo.getBeltsList().isEmpty()) {
-            for (String belt : playerInfo.getBeltsList()) {
+            for (String belt : PlayerManager.getBeltsList(player)) {
                 if (!belt.isEmpty()) {
                     BeltInfo beltInfo = new BeltInfo(belt);
                     ItemStack itemStack = new ItemStack(Material.getMaterial(beltInfo.getMaterialName()));
@@ -36,9 +34,8 @@ public class BeltInventory {
                     inventory.addItem(itemStack);
                 }
             }
-        }
 
-        int playerFightLevel = playerInfo.getFightLevel();
+        int playerFightLevel = PlayerManager.getFightLevel(player);
         ItemStack itemStack = new ItemStack(Material.BARRIER);
         ItemMeta itemMeta = itemStack.getItemMeta();
         int forNumber;

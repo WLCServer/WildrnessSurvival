@@ -38,7 +38,11 @@ public class MainCommand implements CommandExecutor {
                                             case "remove":
 
                                             case "set":
+                                                if (player.hasPermission("ws.admin")) {
 
+                                                } else {
+                                                    player.sendMessage(Language.noPermission);
+                                                }
                                         }
                                     } else {
                                         player.sendMessage("§c请指定要操作的等级!");
@@ -49,33 +53,37 @@ public class MainCommand implements CommandExecutor {
                         if (args.length > 1) {
                             switch (args[1]) {
                                 case "give":
-                                    if (args.length > 2) {
-                                        Player player1 = Bukkit.getPlayer(args[2]);
-                                        String beltID = args[3];
-                                        if (player1 != null) {
-                                            if (BeltsManager.getBeltExist(beltID)) {
-                                                BeltInfo beltInfo = new BeltInfo(beltID);
-                                                Material material = Material.getMaterial(beltInfo.getMaterialName());
-                                                ItemStack itemStack = new ItemStack(material);
-                                                ItemMeta itemMeta = itemStack.getItemMeta();
-                                                itemMeta.setDisplayName(beltInfo.getBeltName());
-                                                itemMeta.setLore(beltInfo.getLore());
-                                                itemStack.setItemMeta(itemMeta);
-                                                if (beltInfo.isEnchant()) {
-                                                    itemStack.addUnsafeEnchantment(Enchantment.VANISHING_CURSE, 1);
+                                    if (player.hasPermission("ws.admin")) {
+                                        if (args.length > 2) {
+                                            Player player1 = Bukkit.getPlayer(args[2]);
+                                            String beltID = args[3];
+                                            if (player1 != null) {
+                                                if (BeltsManager.getBeltExist(beltID)) {
+                                                    BeltInfo beltInfo = new BeltInfo(beltID);
+                                                    Material material = Material.getMaterial(beltInfo.getMaterialName());
+                                                    ItemStack itemStack = new ItemStack(material);
+                                                    ItemMeta itemMeta = itemStack.getItemMeta();
+                                                    itemMeta.setDisplayName(beltInfo.getBeltName());
+                                                    itemMeta.setLore(beltInfo.getLore());
+                                                    itemStack.setItemMeta(itemMeta);
+                                                    if (beltInfo.isEnchant()) {
+                                                        itemStack.addUnsafeEnchantment(Enchantment.VANISHING_CURSE, 1);
+                                                    }
+                                                    NBTItem nbtItem = new NBTItem(itemStack, true);
+                                                    nbtItem.setString("beltID", beltID);
+                                                    nbtItem.setBoolean("HideFlags", true);
+                                                    player1.getInventory().addItem(itemStack);
+                                                } else {
+                                                    WildrnessSurvival.getInstance().getLogger().info("§c无法找到该饰品!");
                                                 }
-                                                NBTItem nbtItem = new NBTItem(itemStack, true);
-                                                nbtItem.setString("beltID", beltID);
-                                                nbtItem.setBoolean("HideFlags", true);
-                                                player1.getInventory().addItem(itemStack);
                                             } else {
-                                                WildrnessSurvival.getInstance().getLogger().info("§c无法找到该饰品!");
+                                                WildrnessSurvival.getInstance().getLogger().info("§c该玩家不在线!");
                                             }
                                         } else {
-                                            WildrnessSurvival.getInstance().getLogger().info("§c该玩家不在线!");
+                                            player.sendMessage("§c请指定饰品的ID!");
                                         }
                                     } else {
-                                        player.sendMessage("§c请指定饰品的ID!");
+                                        player.sendMessage(Language.noPermission);
                                     }
                                     return false;
                                 case "gui":
@@ -88,8 +96,7 @@ public class MainCommand implements CommandExecutor {
                         return false;
                     case "help":
                     default:
-                        player.sendMessage("§6要获取相关信息，请前往未来城官网Wiki查看");
-                        player.sendMessage("§ahttps://www.mcbeserver.cn/wiki/");
+                        player.sendMessage(Language.help);
                         return false;
                 }
             } else {
@@ -137,8 +144,7 @@ public class MainCommand implements CommandExecutor {
                         }
                     case "help":
                     default:
-                        WildrnessSurvival.getInstance().getLogger().info("§6要获取相关信息，请前往未来城官网Wiki查看");
-                        WildrnessSurvival.getInstance().getLogger().info("§ahttps://www.mcbeserver.cn/wiki/");
+                        WildrnessSurvival.getInstance().getLogger().info(Language.help);
                         return false;
                 }
             }
@@ -148,8 +154,7 @@ public class MainCommand implements CommandExecutor {
                 player.sendMessage("§6要获取相关信息，请前往未来城官网Wiki查看");
                 player.sendMessage("§ahttps://www.mcbeserver.cn/wiki/");
             } else {
-                WildrnessSurvival.getInstance().getLogger().info("§6要获取相关信息，请前往未来城官网Wiki查看");
-                WildrnessSurvival.getInstance().getLogger().info("§ahttps://www.mcbeserver.cn/wiki/");
+                WildrnessSurvival.getInstance().getLogger().info(Language.help);
             }
             return false;
         }
