@@ -13,16 +13,30 @@ import java.util.List;
 
 public class PlayerManager {
 
+    public static int getALevel(OfflinePlayer player, String level) {
+        File dataFile = new File(WildrnessSurvival.getInstance().getDataFolder() + "/playerData/", player.getUniqueId() + ".yml");
+        FileConfiguration playerData = YamlConfiguration.loadConfiguration(dataFile);
+        return playerData.getInt(level + "_level");
+    }
+
+    public static void setALevel(OfflinePlayer player, String level, int setLevel) throws IOException {
+        File dataFile = new File(WildrnessSurvival.getInstance().getDataFolder() + "/playerData/", player.getUniqueId() + ".yml");
+        FileConfiguration playerData = YamlConfiguration.loadConfiguration(dataFile);
+        playerData.set(level + "_level", setLevel);
+        playerData.save(dataFile);
+    }
+
     public static int getCollectLevel(OfflinePlayer player) {
         File dataFile = new File(WildrnessSurvival.getInstance().getDataFolder() + "/playerData/", player.getUniqueId() + ".yml");
         FileConfiguration playerData = YamlConfiguration.loadConfiguration(dataFile);
         return playerData.getInt("collect_level");
     }
 
-    public static int setCollectLevel(OfflinePlayer player) {
+    public static void setCollectLevel(OfflinePlayer player, int level) throws IOException {
         File dataFile = new File(WildrnessSurvival.getInstance().getDataFolder() + "/playerData/", player.getUniqueId() + ".yml");
         FileConfiguration playerData = YamlConfiguration.loadConfiguration(dataFile);
-        return playerData.getInt("collect_level");
+        playerData.set("collect_level", level);
+        playerData.save(dataFile);
     }
 
     public static int getCollectExp(OfflinePlayer player) {
@@ -31,10 +45,24 @@ public class PlayerManager {
         return playerData.getInt("collect_exp");
     }
 
+    public static void setCollectExp(OfflinePlayer player, int exp) throws IOException {
+        File dataFile = new File(WildrnessSurvival.getInstance().getDataFolder() + "/playerData/", player.getUniqueId() + ".yml");
+        FileConfiguration playerData = YamlConfiguration.loadConfiguration(dataFile);
+        playerData.set("collect_exp", exp);
+        playerData.save(dataFile);
+    }
+
     public static int getMakeLevel(OfflinePlayer player) {
         File dataFile = new File(WildrnessSurvival.getInstance().getDataFolder() + "/playerData/", player.getUniqueId() + ".yml");
         FileConfiguration playerData = YamlConfiguration.loadConfiguration(dataFile);
         return playerData.getInt("make_level");
+    }
+
+    public static void setMakeLevel(OfflinePlayer player, int level) throws IOException {
+        File dataFile = new File(WildrnessSurvival.getInstance().getDataFolder() + "/playerData/", player.getUniqueId() + ".yml");
+        FileConfiguration playerData = YamlConfiguration.loadConfiguration(dataFile);
+        playerData.set("make_level", level);
+        playerData.save(dataFile);
     }
 
     public static int getMakeExp(OfflinePlayer player) {
@@ -43,10 +71,24 @@ public class PlayerManager {
         return playerData.getInt("make_exp");
     }
 
+    public static void setMakeExp(OfflinePlayer player, int exp) throws IOException {
+        File dataFile = new File(WildrnessSurvival.getInstance().getDataFolder() + "/playerData/", player.getUniqueId() + ".yml");
+        FileConfiguration playerData = YamlConfiguration.loadConfiguration(dataFile);
+        playerData.set("make_exp", exp);
+        playerData.save(dataFile);
+    }
+
     public static int getFightLevel(OfflinePlayer player) {
         File dataFile = new File(WildrnessSurvival.getInstance().getDataFolder() + "/playerData/", player.getUniqueId() + ".yml");
         FileConfiguration playerData = YamlConfiguration.loadConfiguration(dataFile);
         return playerData.getInt("fight_level");
+    }
+
+    public static void setFightLevel(OfflinePlayer player, int level) throws IOException {
+        File dataFile = new File(WildrnessSurvival.getInstance().getDataFolder() + "/playerData/", player.getUniqueId() + ".yml");
+        FileConfiguration playerData = YamlConfiguration.loadConfiguration(dataFile);
+        playerData.set("fight_level", level);
+        playerData.save(dataFile);
     }
 
     public static int getFightExp(OfflinePlayer player) {
@@ -55,13 +97,20 @@ public class PlayerManager {
         return playerData.getInt("fight_exp");
     }
 
+    public static void setFightExp(OfflinePlayer player, int exp) throws IOException {
+        File dataFile = new File(WildrnessSurvival.getInstance().getDataFolder() + "/playerData/", player.getUniqueId() + ".yml");
+        FileConfiguration playerData = YamlConfiguration.loadConfiguration(dataFile);
+        playerData.set("fight_exp", exp);
+        playerData.save(dataFile);
+    }
+
     public static int getPWeek(OfflinePlayer player) {
         File dataFile = new File(WildrnessSurvival.getInstance().getDataFolder() + "/playerData/", player.getUniqueId() + ".yml");
         FileConfiguration playerData = YamlConfiguration.loadConfiguration(dataFile);
         return playerData.getInt("pweek");
     }
 
-    public static void setPWeek(OfflinePlayer player, int pweek) throws IOException{
+    public static void setPWeek(OfflinePlayer player, int pweek) throws IOException {
         File dataFile = new File(WildrnessSurvival.getInstance().getDataFolder() + "/playerData/", player.getUniqueId() + ".yml");
         FileConfiguration playerData = YamlConfiguration.loadConfiguration(dataFile);
         playerData.set("pweek", pweek);

@@ -10,5 +10,6 @@ public class Language {
     private static final FileConfiguration languageConfig = YamlConfiguration.loadConfiguration(languageFile);
     public static final String help = languageConfig.getString("help");
     public static final  String noPermission = WildrnessSurvival.getPrefix() + languageConfig.getString("no-permission");
+    public static final String errorParameters = WildrnessSurvival.getPrefix() + languageConfig.getString("error-parameters");
 
 }

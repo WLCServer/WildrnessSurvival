@@ -1,2 +1,5 @@
 help: "§6要获取相关信息，请前往未来城Wiki查看\n§ahttps://www.mcbeserver.cn/wiki/"
 no-permission: "§c你没有权限使用该命令!"
+error-parameters: "§c参数错误!请查看帮助获取命令用法!"
+check-level: "§a你的 %project% 等级为Lv.%level%，当前经验 %nowexp%/%upexp%"
+check-other-level: "§a玩家 %player% 的 %project% 等级为Lv.%level%，当前经验 %nowexp%/%upexp%"

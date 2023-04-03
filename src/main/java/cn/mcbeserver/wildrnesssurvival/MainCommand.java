@@ -3,9 +3,11 @@ package cn.mcbeserver.wildrnesssurvival;
 import cn.mcbeserver.wildrnesssurvival.inventorys.BeltInventory;
 import cn.mcbeserver.wildrnesssurvival.utils.BeltInfo;
 import cn.mcbeserver.wildrnesssurvival.utils.BeltsManager;
+import cn.mcbeserver.wildrnesssurvival.utils.PlayerManager;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -14,6 +16,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
 
 public class MainCommand implements CommandExecutor {
     @Override
@@ -32,14 +36,32 @@ public class MainCommand implements CommandExecutor {
                                     if (args.length > 2) {
                                         switch (args[2]) {
                                             case "check":
+                                                if (args.length > 3) {
+                                                        String project = args[2];
+                                                        OfflinePlayer player1 = Bukkit.getOfflinePlayer(args[3]);
+                                                        int playerLevel = PlayerManager.getALevel(player, project);
 
+                                                    } else {
+                                                        player.sendMessage(Language.errorParameters);
+                                                    }
                                             case "add":
 
                                             case "remove":
 
                                             case "set":
                                                 if (player.hasPermission("ws.admin")) {
-
+                                                    if (args.length > 4) {
+                                                        String project = args[2];
+                                                        OfflinePlayer player1 = Bukkit.getOfflinePlayer(args[3]);
+                                                        int setLevel = Integer.getInteger(args[4]);
+                                                        try {
+                                                            PlayerManager.setALevel(player1, project, setLevel);
+                                                        } catch (IOException e) {
+                                                            throw new RuntimeException(e);
+                                                        }
+                                                    } else {
+                                                        player.sendMessage(Language.errorParameters);
+                                                    }
                                                 } else {
                                                     player.sendMessage(Language.noPermission);
                                                 }
