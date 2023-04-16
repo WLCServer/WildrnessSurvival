@@ -1,8 +1,9 @@
 package cn.mcbeserver.wildrnesssurvival.inventorys;
 
+import cn.mcbeserver.wildrnesssurvival.em.Skill;
 import cn.mcbeserver.wildrnesssurvival.utils.BeltInfo;
 import cn.mcbeserver.wildrnesssurvival.utils.PlayerManager;
-import de.tr7zw.changeme.nbtapi.NBTItem;
+import de.tr7zw.nbtapi.NBTItem;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -11,6 +12,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+/**
+ * @author DongShaoNB
+ */
 public class BeltInventory {
 
     public static void send(Player player) {
@@ -35,7 +39,7 @@ public class BeltInventory {
                 }
             }
 
-        int playerFightLevel = PlayerManager.getFightLevel(player);
+        int playerFightLevel = PlayerManager.getLevel(player, Skill.FIGHT);
         ItemStack itemStack = new ItemStack(Material.BARRIER);
         ItemMeta itemMeta = itemStack.getItemMeta();
         int forNumber;

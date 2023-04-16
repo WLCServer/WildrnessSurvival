@@ -9,14 +9,17 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.io.File;
 
+/**
+ * @author DongShaoNB
+ */
 public class PlayerListener implements Listener {
 
     @EventHandler
-    public static void PlayerJoinServer(PlayerJoinEvent event) {
+    public static void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         String playerName = player.getName();
-        String playerUUID = String.valueOf(player.getUniqueId());
-        File playerDataFile = new File(WildrnessSurvival.getInstance().getDataFolder() + "/playerData/" + playerUUID + ".yml");
+        String playerUuid = String.valueOf(player.getUniqueId());
+        File playerDataFile = new File(WildrnessSurvival.getInstance().getDataFolder() + "/playerData/" + playerUuid + ".yml");
         if (!playerDataFile.exists()) {
             WildrnessSurvival.getInstance().saveResource("playerData/defaultPlayerData.yml", false);
             File defaultPlayerData = new File(WildrnessSurvival.getInstance().getDataFolder() + "/playerData/defaultPlayerData.yml");

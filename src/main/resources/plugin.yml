@@ -1,7 +1,7 @@
 name: WildrnessSurvival
 version: '${project.version}'
 main: cn.mcbeserver.wildrnesssurvival.WildrnessSurvival
-api-version: 1.19
+api-version: 1.13
 authors: [ DongShaoNB ]
 description: WildrnessSurvival
 website: www.dsnbo.cn
@@ -17,9 +17,6 @@ commands:
       - ws
 
 permissions:
-  wildrnesssurvival.admin:
-    description: "WildrnessSurvival Admin Permission"
-    default: op
   ws.admin:
     description: "WildrnessSurvival Admin Permission"
     default: op

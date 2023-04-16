@@ -1,0 +1,10 @@
+# 升级需要的倍数
+up-need-exp-multiple: 500
+# 最高等级
+max-level: 200
+# 自动备份设置
+autobackup:
+  # 是否开启
+  enable: true
+  # 每次备份间隔(秒)
+  time: 900

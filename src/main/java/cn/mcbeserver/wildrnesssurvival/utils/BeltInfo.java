@@ -8,6 +8,9 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.util.List;
 
+/**
+ * @author DongShaoNB
+ */
 public class BeltInfo {
 
     private final String materialName;
@@ -19,10 +22,10 @@ public class BeltInfo {
     private final int defense;
     private final int speed;
 
-    public BeltInfo(String beltID) {
+    public BeltInfo(String beltId) {
         File dataFile = new File(WildrnessSurvival.getInstance().getDataFolder(), "belts.yml");
         FileConfiguration allBeltData = YamlConfiguration.loadConfiguration(dataFile);
-        ConfigurationSection beltData = allBeltData.getConfigurationSection(beltID);
+        ConfigurationSection beltData = allBeltData.getConfigurationSection(beltId);
         this.materialName = beltData.getString("material");
         this.beltName = beltData.getString("name");
         this.enchant = beltData.getBoolean("enchant");

@@ -11,9 +11,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author DongShaoNB
+ */
 public class TabCompleterListener implements TabCompleter {
 
-    private final String[] subCommand = {"help", "belt", "level"};
+    private final String[] commonSubCommand = {"help", "belt", "level"};
+    private final String[] adminSubCommand = {"help", "belt", "level", "backup", "update", "reload"};
     private final String[] beltCommonSubCommand = {"gui"};
     private final String[] beltAdminSubCommand = {"gui", "give"};
     private final String[] allLevel = {"collect", "make", "fight"};
@@ -23,7 +27,11 @@ public class TabCompleterListener implements TabCompleter {
     @Override
     public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String string, @NotNull String[] args) {
         if (args.length == 1) {
-            return List.of(subCommand);
+            if (commandSender.hasPermission("ws.admin")) {
+                return List.of(adminSubCommand);
+            } else {
+                return List.of(commonSubCommand);
+            }
         } else if (args.length == 2) {
             switch (args[0]) {
                 case "belt":
@@ -62,7 +70,7 @@ public class TabCompleterListener implements TabCompleter {
                     switch (args[1]) {
                         case "give":
                             if (commandSender.hasPermission("ws.admin")) {
-                                return BeltsManager.getAllBeltsID();
+                                return BeltsManager.getAllBeltsId();
                             }
                     }
 

@@ -2,7 +2,7 @@ package cn.mcbeserver.wildrnesssurvival.listeners;
 
 import cn.mcbeserver.wildrnesssurvival.WildrnessSurvival;
 import cn.mcbeserver.wildrnesssurvival.utils.PlayerManager;
-import de.tr7zw.changeme.nbtapi.NBTItem;
+import de.tr7zw.nbtapi.NBTItem;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,12 +19,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * @author DongShaoNB
+ */
 public class InventoryListener implements Listener {
 
     @EventHandler
-    public static void InventoryClickEvent(InventoryClickEvent event) {
+    public static void onInventoryClick(InventoryClickEvent event) {
         InventoryAction inventoryAction = event.getAction();
-        if (event.getWhoClicked().getOpenInventory().getTitle().equalsIgnoreCase("§a§l我的饰品")) {
+        if ("§a§l我的饰品".equalsIgnoreCase(event.getWhoClicked().getOpenInventory().getTitle())) {
             if (event.getClickedInventory() != null) {
                 if (event.getClickedInventory().getType() != InventoryType.PLAYER) {
                     if (event.getCurrentItem() != null) {
@@ -39,24 +42,34 @@ public class InventoryListener implements Listener {
                             event.setCancelled(true);
                         }
                     }
+                } else {
+                    if (event.getCurrentItem() != null) {
+                        if (event.isShiftClick()) {
+                            ItemStack itemStack = event.getCurrentItem();
+                            NBTItem nbtItem = new NBTItem(itemStack);
+                            if (nbtItem.getString("beltID").isEmpty()) {
+                                event.setCancelled(true);
+                            }
+                        }
+                    }
                 }
             }
         }
     }
 
     @EventHandler
-    public static void InventoryCloseEvent(InventoryCloseEvent event) throws IOException {
+    public static void onInventoryClose(InventoryCloseEvent event) throws IOException {
         Inventory inventory = event.getInventory();
         Player player = (Player) event.getPlayer();
-        if (event.getPlayer().getOpenInventory().getTitle().equalsIgnoreCase("§a§l我的饰品")) {
+        if ("§a§l我的饰品".equalsIgnoreCase(event.getPlayer().getOpenInventory().getTitle())) {
             List<String> beltsList = new ArrayList<>();
             for (int i = 0; i < 9; i++) {
                 if (inventory.getItem(i) != null) {
                     if (inventory.getItem(i).getType() != Material.BARRIER && inventory.getItem(i).getType() != Material.AIR && inventory.getItem(i).getType() != null) {
                         ItemStack itemStack = inventory.getItem(i);
                         NBTItem nbtItem = new NBTItem(itemStack);
-                        String beltID = nbtItem.getString("beltID");
-                        beltsList.add(beltID);
+                        String beltId = nbtItem.getString("beltID");
+                        beltsList.add(beltId);
                     } else {
                         break;
                     }

@@ -1,10 +1,11 @@
 package cn.mcbeserver.wildrnesssurvival;
 
+import cn.mcbeserver.wildrnesssurvival.em.Skill;
 import cn.mcbeserver.wildrnesssurvival.inventorys.BeltInventory;
 import cn.mcbeserver.wildrnesssurvival.utils.BeltInfo;
 import cn.mcbeserver.wildrnesssurvival.utils.BeltsManager;
 import cn.mcbeserver.wildrnesssurvival.utils.PlayerManager;
-import de.tr7zw.changeme.nbtapi.NBTItem;
+import de.tr7zw.nbtapi.NBTItem;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -19,69 +20,114 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
+/**
+ * @author DongShaoNB
+ */
 public class MainCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String string, @NotNull String[] args) {
         if (args.length > 0) {
-            if (commandSender instanceof Player) {
-                Player player = (Player) commandSender;
+            if (commandSender instanceof Player player) {
                 switch (args[0]) {
-                    case "level":
+                    case "level" -> {
                         if (args.length > 1) {
                             switch (args[1]) {
                                 case "collect":
                                 case "make":
                                 case "fight":
-                                    String cLevel = args[1];
+                                    String skill = args[1];
                                     if (args.length > 2) {
                                         switch (args[2]) {
-                                            case "check":
+                                            case "check" -> {
                                                 if (args.length > 3) {
-                                                        String project = args[2];
-                                                        OfflinePlayer player1 = Bukkit.getOfflinePlayer(args[3]);
-                                                        int playerLevel = PlayerManager.getALevel(player, project);
-
+                                                    OfflinePlayer player1 = Bukkit.getOfflinePlayer(args[3]);
+                                                    if (PlayerManager.isExist(player1)) {
+                                                        int playerLevel = PlayerManager.getLevel(player1, Skill.getSkill(skill));
+                                                        player.sendMessage(
+                                                                WildrnessSurvival.getPrefix() + Message.checkPlayerLevel
+                                                                        .replace("%player%", player1.getName())
+                                                                        .replace("%skill%", Skill.getSkill(skill).getSkillName())
+                                                                        .replace("%level%", String.valueOf(playerLevel))
+                                                                        .replace("%nowexp%", String.valueOf(PlayerManager.getNowAlreadyExp(player1, Skill.getSkill(skill))))
+                                                                        .replace("%upallexp%", String.valueOf(PlayerManager.getUpAllExp(player1, Skill.getSkill(skill)))));
                                                     } else {
-                                                        player.sendMessage(Language.errorParameters);
-                                                    }
-                                            case "add":
-
-                                            case "remove":
-
-                                            case "set":
-                                                if (player.hasPermission("ws.admin")) {
-                                                    if (args.length > 4) {
-                                                        String project = args[2];
-                                                        OfflinePlayer player1 = Bukkit.getOfflinePlayer(args[3]);
-                                                        int setLevel = Integer.getInteger(args[4]);
-                                                        try {
-                                                            PlayerManager.setALevel(player1, project, setLevel);
-                                                        } catch (IOException e) {
-                                                            throw new RuntimeException(e);
-                                                        }
-                                                    } else {
-                                                        player.sendMessage(Language.errorParameters);
+                                                        player.sendMessage(WildrnessSurvival.getPrefix() + Message.unknownPlayer);
                                                     }
                                                 } else {
-                                                    player.sendMessage(Language.noPermission);
+                                                    int playerLevel = PlayerManager.getLevel(player, Skill.getSkill(skill));
+                                                    player.sendMessage(
+                                                            WildrnessSurvival.getPrefix() + Message.checkLevel
+                                                                    .replace("%player%", player.getName())
+                                                                    .replace("%skill%", Skill.getSkill(skill).getSkillName())
+                                                                    .replace("%level%", String.valueOf(playerLevel))
+                                                                    .replace("%nowexp%", String.valueOf(PlayerManager.getNowAlreadyExp(player, Skill.getSkill(skill))))
+                                                                    .replace("%upallexp%", String.valueOf(PlayerManager.getUpAllExp(player, Skill.getSkill(skill)))));
                                                 }
+                                                return false;
+                                            }
+                                            case "add" -> {
+                                                if (player.hasPermission("ws.admin")) {
+                                                    if (args.length > 4) {
+                                                        OfflinePlayer player1 = Bukkit.getOfflinePlayer(args[3]);
+                                                        if (PlayerManager.isExist(player1)) {
+                                                            int playerNowExp = PlayerManager.getExp(player1, Skill.getSkill(skill));
+                                                            int addExp = Integer.parseInt(args[4]);
+                                                            PlayerManager.setExp(player1, Skill.getSkill(skill), playerNowExp + addExp);
+                                                        } else {
+                                                            player.sendMessage(WildrnessSurvival.getPrefix() + Message.unknownPlayer);
+                                                        }
+                                                    }
+                                                } else {
+                                                    player.sendMessage(WildrnessSurvival.getPrefix() + Message.noPermission);
+                                                }
+                                                return false;
+                                            }
+                                            case "remove" -> {
+                                                return false;
+                                            }
+                                            case "set" -> {
+                                                if (player.hasPermission("ws.admin")) {
+                                                    if (args.length > 4) {
+                                                        OfflinePlayer player1 = Bukkit.getOfflinePlayer(args[3]);
+                                                        if (PlayerManager.isExist(player1)) {
+                                                            int setLevel = Integer.parseInt(args[4]);
+                                                            PlayerManager.setLevel(player1, Skill.getSkill(skill), setLevel);
+                                                        } else {
+                                                            player.sendMessage(WildrnessSurvival.getPrefix() + Message.errorParameters);
+                                                        }
+                                                    } else {
+                                                        player.sendMessage(WildrnessSurvival.getPrefix() + Message.unknownPlayer);
+                                                    }
+                                                } else {
+                                                    player.sendMessage(WildrnessSurvival.getPrefix() + Message.noPermission);
+                                                }
+                                                return false;
+                                            }
                                         }
                                     } else {
-                                        player.sendMessage("§c请指定要操作的等级!");
+                                        player.sendMessage(WildrnessSurvival.getPrefix() + Message.appointControl);
+                                        return false;
                                     }
+                                default:
+                                    player.sendMessage(WildrnessSurvival.getPrefix() + Message.skillNotExist);
+                                    return false;
                             }
+                        } else {
+                            player.sendMessage(WildrnessSurvival.getPrefix() + Message.appointSkill);
                         }
-                    case "belt":
+                        return false;
+                    }
+                    case "belt" -> {
                         if (args.length > 1) {
                             switch (args[1]) {
-                                case "give":
+                                case "give" -> {
                                     if (player.hasPermission("ws.admin")) {
                                         if (args.length > 2) {
                                             Player player1 = Bukkit.getPlayer(args[2]);
-                                            String beltID = args[3];
+                                            String beltId = args[3];
                                             if (player1 != null) {
-                                                if (BeltsManager.getBeltExist(beltID)) {
-                                                    BeltInfo beltInfo = new BeltInfo(beltID);
+                                                if (BeltsManager.getBeltExist(beltId)) {
+                                                    BeltInfo beltInfo = new BeltInfo(beltId);
                                                     Material material = Material.getMaterial(beltInfo.getMaterialName());
                                                     ItemStack itemStack = new ItemStack(material);
                                                     ItemMeta itemMeta = itemStack.getItemMeta();
@@ -92,7 +138,7 @@ public class MainCommand implements CommandExecutor {
                                                         itemStack.addUnsafeEnchantment(Enchantment.VANISHING_CURSE, 1);
                                                     }
                                                     NBTItem nbtItem = new NBTItem(itemStack, true);
-                                                    nbtItem.setString("beltID", beltID);
+                                                    nbtItem.setString("beltID", beltId);
                                                     nbtItem.setBoolean("HideFlags", true);
                                                     player1.getInventory().addItem(itemStack);
                                                 } else {
@@ -102,37 +148,73 @@ public class MainCommand implements CommandExecutor {
                                                 WildrnessSurvival.getInstance().getLogger().info("§c该玩家不在线!");
                                             }
                                         } else {
-                                            player.sendMessage("§c请指定饰品的ID!");
+                                            player.sendMessage(WildrnessSurvival.getPrefix() + Message.appointBeltId);
                                         }
                                     } else {
-                                        player.sendMessage(Language.noPermission);
+                                        player.sendMessage(WildrnessSurvival.getPrefix() + Message.noPermission);
                                     }
-                                    return false;
-                                case "gui":
+                                }
+                                case "gui" -> {
                                     BeltInventory.send(player);
-                                    return false;
+                                }
                             }
                         } else {
                             BeltInventory.send(player);
                         }
                         return false;
-                    case "help":
-                    default:
-                        player.sendMessage(Language.help);
+                    }
+                    case "backup" -> {
+                        if (player.hasPermission("ws.admin")) {
+                            try {
+                                WildrnessSurvival.backupAllResources();
+                                    player.sendMessage(WildrnessSurvival.getPrefix() + Message.backupSuccess);
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
                         return false;
+                    }
+                    case "update" -> {
+                        if (player.hasPermission("ws.admin")) {
+                            try {
+                                WildrnessSurvival.backupAllResources();
+                                player.sendMessage(WildrnessSurvival.getPrefix() + Message.backupSuccess);
+                                WildrnessSurvival.updateAllResources();
+                                player.sendMessage(WildrnessSurvival.getPrefix() + Message.updateSuccess);
+                                WildrnessSurvival.reloadPlugin();
+                                player.sendMessage(WildrnessSurvival.getPrefix() + Message.reloadSuccess);
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                        return false;
+                    }
+                    case "reload" -> {
+                        if (player.hasPermission("ws.admin")) {
+                            WildrnessSurvival.reloadPlugin();
+                            player.sendMessage(WildrnessSurvival.getPrefix() + Message.reloadSuccess);
+                        } else {
+                            player.sendMessage(WildrnessSurvival.getPrefix() + Message.noPermission);
+                        }
+                        return false;
+                    }
+                    default -> {
+                        player.sendMessage(Message.help);
+                        return false;
+                    }
                 }
             } else {
                 switch (args[0]) {
                     case "belt":
                         if (args.length > 1) {
                             switch (args[1]) {
-                                case "give":
+                                case "give" -> {
                                     if (args.length > 2) {
                                         Player player = Bukkit.getPlayer(args[2]);
-                                        String beltID = args[3];
+                                        String beltId = args[3];
                                         if (player != null) {
-                                            if (BeltsManager.getBeltExist(beltID)) {
-                                                BeltInfo beltInfo = new BeltInfo(beltID);
+                                            if (BeltsManager.getBeltExist(beltId)) {
+                                                BeltInfo beltInfo = new BeltInfo(beltId);
                                                 Material material = Material.getMaterial(beltInfo.getMaterialName());
                                                 ItemStack itemStack = new ItemStack(material);
                                                 ItemMeta itemMeta = itemStack.getItemMeta();
@@ -143,7 +225,7 @@ public class MainCommand implements CommandExecutor {
                                                     itemStack.addUnsafeEnchantment(Enchantment.VANISHING_CURSE, 1);
                                                 }
                                                 NBTItem nbtItem = new NBTItem(itemStack, true);
-                                                nbtItem.setString("beltID", beltID);
+                                                nbtItem.setString("beltID", beltId);
                                                 nbtItem.setBoolean("HideFlags", true);
                                                 player.getInventory().addItem(itemStack);
                                             } else {
@@ -156,27 +238,30 @@ public class MainCommand implements CommandExecutor {
                                         WildrnessSurvival.getInstance().getLogger().info("§c请指定饰品的ID!");
                                     }
                                     return false;
-                                case "gui":
+                                }
+                                case "gui" -> {
                                     WildrnessSurvival.getInstance().getLogger().info("§c该命令只能在游戏中使用!");
                                     return false;
+                                }
                             }
                         } else {
                             WildrnessSurvival.getInstance().getLogger().info("§c该命令只能在游戏中使用!");
                             return false;
                         }
+                    case "reload":
+                        WildrnessSurvival.getInstance().reloadConfig();
+                        WildrnessSurvival.getInstance().getLogger().info(Message.reloadSuccess);
                     case "help":
                     default:
-                        WildrnessSurvival.getInstance().getLogger().info(Language.help);
+                        WildrnessSurvival.getInstance().getLogger().info(Message.help);
                         return false;
                 }
             }
         } else {
-            if (commandSender instanceof Player) {
-                Player player = (Player) commandSender;
-                player.sendMessage("§6要获取相关信息，请前往未来城官网Wiki查看");
-                player.sendMessage("§ahttps://www.mcbeserver.cn/wiki/");
+            if (commandSender instanceof Player player) {
+                player.sendMessage(Message.help);
             } else {
-                WildrnessSurvival.getInstance().getLogger().info(Language.help);
+                WildrnessSurvival.getInstance().getLogger().info(Message.help);
             }
             return false;
         }
