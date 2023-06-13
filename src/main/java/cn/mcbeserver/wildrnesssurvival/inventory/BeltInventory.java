@@ -1,8 +1,8 @@
-package cn.mcbeserver.wildrnesssurvival.inventorys;
+package cn.mcbeserver.wildrnesssurvival.inventory;
 
 import cn.mcbeserver.wildrnesssurvival.em.Skill;
-import cn.mcbeserver.wildrnesssurvival.utils.BeltInfo;
-import cn.mcbeserver.wildrnesssurvival.utils.PlayerManager;
+import cn.mcbeserver.wildrnesssurvival.util.BeltInfo;
+import cn.mcbeserver.wildrnesssurvival.api.PlayerManager;
 import de.tr7zw.nbtapi.NBTItem;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;

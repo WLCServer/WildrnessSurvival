@@ -25,12 +25,12 @@ public enum Skill {
         return skillName;
     }
 
-    public static Skill getSkill(String skill) {
-        for (Skill skill1 : Skill.values()) {
-            if (skill1.getSkillId().equalsIgnoreCase(skill)) {
-                return skill1;
+    public static Skill getSkill(String skillId) {
+        for (Skill skill : Skill.values()) {
+            if (skill.getSkillId().equalsIgnoreCase(skillId)) {
+                return skill;
             }
         }
-        throw new IllegalArgumentException("未知的技能Id: " + skill);
+        throw new IllegalArgumentException("未知的技能ID: " + skillId);
     }
 }

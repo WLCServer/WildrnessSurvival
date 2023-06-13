@@ -10,7 +10,7 @@ import java.io.File;
  */
 public class MessageConfig {
 
-    public static YamlConfiguration messageConfig;
+    private static YamlConfiguration messageConfig;
 
     public static void load() {
         File messageFile = new File(WildrnessSurvival.getInstance().getDataFolder(), "message.yml");

@@ -1,4 +1,4 @@
-package cn.mcbeserver.wildrnesssurvival.utils;
+package cn.mcbeserver.wildrnesssurvival.util;
 
 import java.io.*;
 import java.util.zip.ZipEntry;

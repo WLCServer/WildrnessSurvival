@@ -2,7 +2,7 @@ package cn.mcbeserver.wildrnesssurvival.support;
 
 import cn.mcbeserver.wildrnesssurvival.WildrnessSurvival;
 import cn.mcbeserver.wildrnesssurvival.em.Skill;
-import cn.mcbeserver.wildrnesssurvival.utils.PlayerManager;
+import cn.mcbeserver.wildrnesssurvival.api.PlayerManager;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;

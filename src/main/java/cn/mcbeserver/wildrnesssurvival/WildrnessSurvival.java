@@ -1,12 +1,13 @@
 package cn.mcbeserver.wildrnesssurvival;
 
 import cn.mcbeserver.wildrnesssurvival.config.MessageConfig;
-import cn.mcbeserver.wildrnesssurvival.listeners.BlockListener;
-import cn.mcbeserver.wildrnesssurvival.listeners.InventoryListener;
-import cn.mcbeserver.wildrnesssurvival.listeners.PlayerListener;
-import cn.mcbeserver.wildrnesssurvival.listeners.TabCompleterListener;
+import cn.mcbeserver.wildrnesssurvival.listener.BlockListener;
+import cn.mcbeserver.wildrnesssurvival.listener.InventoryListener;
+import cn.mcbeserver.wildrnesssurvival.listener.PlayerListener;
+import cn.mcbeserver.wildrnesssurvival.listener.TabCompleterListener;
 import cn.mcbeserver.wildrnesssurvival.support.PlaceholderSupport;
-import cn.mcbeserver.wildrnesssurvival.utils.ZipUtils;
+import cn.mcbeserver.wildrnesssurvival.util.AutoBackup;
+import cn.mcbeserver.wildrnesssurvival.util.ZipUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -32,7 +33,7 @@ public final class WildrnessSurvival extends JavaPlugin {
         registerEvents();
         registerCommands();
         hookSupportPlugins();
-        loggerWLCServerFont();
+        loggerWlcServerFont();
         if (getConfig().getBoolean("autobackup.enable")) {
             AutoBackup.start();
         }
@@ -41,7 +42,9 @@ public final class WildrnessSurvival extends JavaPlugin {
     @Override
     public void onDisable() {
         if (getConfig().getBoolean("autobackup.enable")) {
-            AutoBackup.stop();
+            if (AutoBackup.getAutoBackup() != null) {
+                AutoBackup.stop();
+            }
         }
     }
 
@@ -58,11 +61,7 @@ public final class WildrnessSurvival extends JavaPlugin {
         }
         File playerDataFolder = new File(getDataFolder() + "/playerData/");
         if (!playerDataFolder.exists()) {
-            if (playerDataFolder.mkdirs()) {
-                WildrnessSurvival.getInstance().getLogger().info("§a插件首次加载，已成功初始化!");
-            } else {
-                WildrnessSurvival.getInstance().getLogger().warning("§e插件首次加载失败，请查看后台报错并处理!");
-            }
+            playerDataFolder.mkdirs();
         }
         File beltsFile = new File(getDataFolder() + "/belts.yml");
         if (!beltsFile.exists()) {
@@ -73,6 +72,7 @@ public final class WildrnessSurvival extends JavaPlugin {
     public static void reloadPlugin() {
         getInstance().reloadConfig();
         MessageConfig.reloadConfig();
+        Message.reload();
     }
 
     public void registerEvents() {
@@ -111,8 +111,8 @@ public final class WildrnessSurvival extends JavaPlugin {
         File newConfigFile = new File(getInstance().getDataFolder(), "/config.yml");
         File oldMessageFile = new File(getUpdateFolder(), "/message.yml");
         File newMessageFile = new File(getInstance().getDataFolder(), "/message.yml");
-        File newPlayerDataFile = new File(getInstance().getDataFolder(), "/playerData/defaultPlayerData.yml");
         File playerDataFileFolder = new File(getInstance().getDataFolder() + "/playerData/");
+        File newPlayerDataFile = new File(getInstance().getDataFolder(), "/playerData/defaultPlayerData.yml");
         YamlConfiguration oldConfig = YamlConfiguration.loadConfiguration(oldConfigFile);
         YamlConfiguration newConfig = YamlConfiguration.loadConfiguration(newConfigFile);
         YamlConfiguration oldMessage = YamlConfiguration.loadConfiguration(oldMessageFile);
@@ -137,13 +137,13 @@ public final class WildrnessSurvival extends JavaPlugin {
         }
     }
 
-    public void loggerWLCServerFont() {
-        getLogger().info("§b __          ___      _____  _____                          ");
-        getLogger().info("§b \\ \\        / / |    / ____|/ ____|                         ");
-        getLogger().info("§b  \\ \\  /\\  / /| |   | |    | (___   ___ _ ____   _____ _ __ ");
-        getLogger().info("§b   \\ \\/  \\/ / | |   | |     \\___ \\ / _ \\ '__\\ \\ / / _ \\ '__|");
-        getLogger().info("§b    \\  /\\  /  | |___| |____ ____) |  __/ |   \\ V /  __/ |   ");
-        getLogger().info("§b     \\/  \\/   |______\\_____|_____/ \\___|_|    \\_/ \\___|_|   ");
+    public void loggerWlcServerFont() {
+        Bukkit.getLogger().info("§b __          ___      _____  _____                          ");
+        Bukkit.getLogger().info("§b \\ \\        / / |    / ____|/ ____|                         ");
+        Bukkit.getLogger().info("§b  \\ \\  /\\  / /| |   | |    | (___   ___ _ ____   _____ _ __ ");
+        Bukkit.getLogger().info("§b   \\ \\/  \\/ / | |   | |     \\___ \\ / _ \\ '__\\ \\ / / _ \\ '__|");
+        Bukkit.getLogger().info("§b    \\  /\\  /  | |___| |____ ____) |  __/ |   \\ V /  __/ |   ");
+        Bukkit.getLogger().info("§b     \\/  \\/   |______\\_____|_____/ \\___|_|    \\_/ \\___|_|   ");
     }
 
     public static String getBackupFolder() {

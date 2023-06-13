@@ -1,7 +1,8 @@
-package cn.mcbeserver.wildrnesssurvival.listeners;
+package cn.mcbeserver.wildrnesssurvival.listener;
 
 import cn.mcbeserver.wildrnesssurvival.WildrnessSurvival;
-import cn.mcbeserver.wildrnesssurvival.utils.PlayerManager;
+import cn.mcbeserver.wildrnesssurvival.api.PlayerManager;
+import cn.mcbeserver.wildrnesssurvival.em.Attribute;
 import de.tr7zw.nbtapi.NBTItem;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -60,28 +61,41 @@ public class InventoryListener implements Listener {
     @EventHandler
     public static void onInventoryClose(InventoryCloseEvent event) throws IOException {
         Inventory inventory = event.getInventory();
-        Player player = (Player) event.getPlayer();
-        if ("§a§l我的饰品".equalsIgnoreCase(event.getPlayer().getOpenInventory().getTitle())) {
-            List<String> beltsList = new ArrayList<>();
-            for (int i = 0; i < 9; i++) {
-                if (inventory.getItem(i) != null) {
-                    if (inventory.getItem(i).getType() != Material.BARRIER && inventory.getItem(i).getType() != Material.AIR && inventory.getItem(i).getType() != null) {
-                        ItemStack itemStack = inventory.getItem(i);
-                        NBTItem nbtItem = new NBTItem(itemStack);
-                        String beltId = nbtItem.getString("beltID");
-                        beltsList.add(beltId);
-                    } else {
+        if (event.getPlayer() instanceof Player player) {
+            HashMap<Attribute, Integer> oldPlayerAttributeList = PlayerManager.getPlayerAttribute(player);
+            if ("§a§l我的饰品".equalsIgnoreCase(event.getPlayer().getOpenInventory().getTitle())) {
+                List<String> beltsList = new ArrayList<>();
+                for (int i = 0; i < 9; i++) {
+                    if (inventory.getItem(i) != null) {
+                        if (inventory.getItem(i).getType() != Material.BARRIER && inventory.getItem(i).getType() != Material.AIR && inventory.getItem(i).getType() != null) {
+                            ItemStack itemStack = inventory.getItem(i);
+                            NBTItem nbtItem = new NBTItem(itemStack);
+                            String beltId = nbtItem.getString("beltID");
+                            beltsList.add(beltId);
+                        }
                         break;
                     }
                 }
+                PlayerManager.setBeltsList(player, beltsList);
+                HashMap<Attribute, Integer> playerAttributeList = PlayerManager.getBeltsAttribute(beltsList);
+                String healthChange = "";
+                String attackChange = "";
+                String defenseChange = "";
+                String speedChange = "";
+                if (playerAttributeList.get(Attribute.HEALTH) - oldPlayerAttributeList.get(Attribute.HEALTH) > 0) {
+                    healthChange += "§a+" + (playerAttributeList.get(Attribute.HEALTH) - oldPlayerAttributeList.get(Attribute.HEALTH));
+                } else if (playerAttributeList.get(Attribute.HEALTH) - oldPlayerAttributeList.get(Attribute.HEALTH) < 0) {
+                    healthChange += "§c-" + (oldPlayerAttributeList.get(Attribute.HEALTH) - playerAttributeList.get(Attribute.HEALTH));
+                } else {
+                    healthChange += "§f0";
+                }
+
+                player.sendMessage(WildrnessSurvival.getPrefix() + "§a你的饰品总属性: ");
+                player.sendMessage(WildrnessSurvival.getPrefix() + "§a生命: " + playerAttributeList.get(Attribute.HEALTH));
+                player.sendMessage(WildrnessSurvival.getPrefix() + "§a攻击: " + playerAttributeList.get(Attribute.ATTACK));
+                player.sendMessage(WildrnessSurvival.getPrefix() + "§a防御: " + playerAttributeList.get(Attribute.DEFENSE));
+                player.sendMessage(WildrnessSurvival.getPrefix() + "§a速度: " + playerAttributeList.get(Attribute.SPEED));
             }
-            PlayerManager.setBeltsList(player, beltsList);
-            HashMap<String, Integer> playerAttributeList = PlayerManager.getPlayerAttribute(player);
-            player.sendMessage(WildrnessSurvival.getPrefix() + "§a你的饰品总属性: ");
-            player.sendMessage(WildrnessSurvival.getPrefix() + "§a生命上限 +" + playerAttributeList.get("health"));
-            player.sendMessage(WildrnessSurvival.getPrefix() + "§a攻击力 +" + playerAttributeList.get("attack"));
-            player.sendMessage(WildrnessSurvival.getPrefix() + "§a防御力 +" + playerAttributeList.get("defense"));
-            player.sendMessage(WildrnessSurvival.getPrefix() + "§a速度 +" + playerAttributeList.get("speed"));
         }
     }
 

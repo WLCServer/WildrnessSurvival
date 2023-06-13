@@ -1,7 +1,9 @@
-package cn.mcbeserver.wildrnesssurvival.utils;
+package cn.mcbeserver.wildrnesssurvival.api;
 
+import cn.mcbeserver.wildrnesssurvival.em.Attribute;
 import cn.mcbeserver.wildrnesssurvival.em.Skill;
 import cn.mcbeserver.wildrnesssurvival.WildrnessSurvival;
+import cn.mcbeserver.wildrnesssurvival.util.BeltInfo;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -41,10 +43,9 @@ public class PlayerManager {
             try {
                 playerData.save(dataFile);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
             }
         });
-
     }
 
     public static int getLevel(OfflinePlayer player, Skill skill) {
@@ -70,7 +71,7 @@ public class PlayerManager {
         PlayerManager.setExp(player, skill, exp);
     }
 
-    public static int getNowAlreadyExp(OfflinePlayer player, Skill skill) {
+    public static int getNowExp(OfflinePlayer player, Skill skill) {
         int playerLevelExp = PlayerManager.getExp(player, skill);
         int upNeedExpMultiple = WildrnessSurvival.getInstance().getConfig().getInt("up-need-exp-multiple");
         for (int i = 0; playerLevelExp >= upNeedExpMultiple * i; i++) {
@@ -91,24 +92,24 @@ public class PlayerManager {
     }
 
     public static double getExpPercent(OfflinePlayer player, Skill skill) {
-        return PlayerManager.getNowAlreadyExp(player, skill) / (double) PlayerManager.getUpAllExp(player, skill);
+        return PlayerManager.getNowExp(player, skill) / (double) PlayerManager.getUpAllExp(player, skill);
     }
 
     public static int getUpNeedExp(OfflinePlayer player, Skill skill) {
-        return getUpAllExp(player, skill) - getNowAlreadyExp(player, skill);
+        return getUpAllExp(player, skill) - getNowExp(player, skill);
     }
 
     public static int getWeek(OfflinePlayer player) {
         File dataFile = new File(WildrnessSurvival.getInstance().getDataFolder() + "/playerData/", player.getUniqueId() + ".yml");
         FileConfiguration playerData = YamlConfiguration.loadConfiguration(dataFile);
-        return playerData.getInt("pweek");
+        return playerData.getInt("week");
     }
 
     public static void setWeek(OfflinePlayer player, int pweek) {
         Bukkit.getScheduler().runTaskAsynchronously(WildrnessSurvival.getInstance(), () -> {
             File dataFile = new File(WildrnessSurvival.getInstance().getDataFolder() + "/playerData/", player.getUniqueId() + ".yml");
             FileConfiguration playerData = YamlConfiguration.loadConfiguration(dataFile);
-            playerData.set("pweek", pweek);
+            playerData.set("week", pweek);
             try {
                 playerData.save(dataFile);
             } catch (IOException e) {
@@ -121,6 +122,10 @@ public class PlayerManager {
         File dataFile = new File(WildrnessSurvival.getInstance().getDataFolder() + "/playerData/", player.getUniqueId() + ".yml");
         FileConfiguration playerData = YamlConfiguration.loadConfiguration(dataFile);
         return playerData.getStringList("belts");
+    }
+
+    public static Integer getBeltsNumber(OfflinePlayer player) {
+        return getBeltsList(player).size();
     }
 
     public static void setBeltsList(OfflinePlayer player, List<String> beltsList) {
@@ -136,8 +141,8 @@ public class PlayerManager {
         });
     }
 
-    public static HashMap<String, Integer> getPlayerAttribute(Player player) {
-        HashMap<String, Integer> attributeHashMap = new HashMap<>();
+    public static HashMap<Attribute, Integer> getPlayerAttribute(Player player) {
+        HashMap<Attribute, Integer> attributeHashMap = new HashMap<>();
         int health = 0;
         int attack = 0;
         int defense = 0;
@@ -150,10 +155,30 @@ public class PlayerManager {
             defense = defense + beltInfo.getDefense();
             speed = speed + beltInfo.getSpeed();
         }
-        attributeHashMap.put("health", health);
-        attributeHashMap.put("attack", attack);
-        attributeHashMap.put("defense", defense);
-        attributeHashMap.put("speed", speed);
+        attributeHashMap.put(Attribute.HEALTH, health);
+        attributeHashMap.put(Attribute.ATTACK, attack);
+        attributeHashMap.put(Attribute.DEFENSE, defense);
+        attributeHashMap.put(Attribute.SPEED, speed);
+        return attributeHashMap;
+    }
+
+    public static HashMap<Attribute, Integer> getBeltsAttribute(List<String> beltList) {
+        HashMap<Attribute, Integer> attributeHashMap = new HashMap<>();
+        int health = 0;
+        int attack = 0;
+        int defense = 0;
+        int speed = 0;
+        for (String belt : beltList) {
+            BeltInfo beltInfo = new BeltInfo(belt);
+            health = health + beltInfo.getHealth();
+            attack = attack + beltInfo.getAttack();
+            defense = defense + beltInfo.getDefense();
+            speed = speed + beltInfo.getSpeed();
+        }
+        attributeHashMap.put(Attribute.HEALTH, health);
+        attributeHashMap.put(Attribute.ATTACK, attack);
+        attributeHashMap.put(Attribute.DEFENSE, defense);
+        attributeHashMap.put(Attribute.SPEED, speed);
         return attributeHashMap;
     }
 

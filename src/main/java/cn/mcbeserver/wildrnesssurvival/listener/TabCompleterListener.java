@@ -1,6 +1,6 @@
-package cn.mcbeserver.wildrnesssurvival.listeners;
+package cn.mcbeserver.wildrnesssurvival.listener;
 
-import cn.mcbeserver.wildrnesssurvival.utils.BeltsManager;
+import cn.mcbeserver.wildrnesssurvival.api.BeltManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -23,6 +23,7 @@ public class TabCompleterListener implements TabCompleter {
     private final String[] allLevel = {"collect", "make", "fight"};
     private final String[] levelCommonSubCommand = {"check"};
     private final String[] levelAdminSubCommand = {"check", "add", "remove", "set"};
+    private final String[] levelControlNumber = {"50", "100", "200", "500", "1000", "2000", "5000", "10000"};
 
     @Override
     public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String string, @NotNull String[] args) {
@@ -34,14 +35,16 @@ public class TabCompleterListener implements TabCompleter {
             }
         } else if (args.length == 2) {
             switch (args[0]) {
-                case "belt":
+                case "belt" -> {
                     if (commandSender.hasPermission("ws.admin")) {
                         return List.of(beltAdminSubCommand);
                     } else {
                         return List.of(beltCommonSubCommand);
                     }
-                case "level":
+                }
+                case "level" -> {
                     return List.of(allLevel);
+                }
             }
         } else if (args.length == 3) {
             switch (args[0]) {
@@ -70,12 +73,36 @@ public class TabCompleterListener implements TabCompleter {
                     switch (args[1]) {
                         case "give":
                             if (commandSender.hasPermission("ws.admin")) {
-                                return BeltsManager.getAllBeltsId();
+                                return BeltManager.getAllBeltsId();
                             }
+                    }
+                case "level":
+                    switch (args[2]) {
+                        case "add", "remove", "set", "check" -> {
+                            if (commandSender.hasPermission("ws.admin")) {
+                                List<String> playerList = new ArrayList<>();
+                                for (Player player : Bukkit.getOnlinePlayers()) {
+                                    playerList.add(player.getName());
+                                }
+                                return playerList;
+                            } else {
+                                return List.of();
+                            }
+                        }
                     }
 
             }
             return List.of();
+        } else if (args.length == 5) {
+            switch (args[2]) {
+                case "add", "remove", "set" -> {
+                    if (commandSender.hasPermission("ws.admin")) {
+                        return List.of(levelControlNumber);
+                    } else {
+                        return List.of();
+                    }
+                }
+            }
         }
         return List.of();
     }

@@ -1,4 +1,4 @@
-package cn.mcbeserver.wildrnesssurvival.utils;
+package cn.mcbeserver.wildrnesssurvival.util;
 
 import cn.mcbeserver.wildrnesssurvival.WildrnessSurvival;
 import org.bukkit.configuration.ConfigurationSection;

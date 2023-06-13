@@ -1,10 +1,10 @@
 package cn.mcbeserver.wildrnesssurvival;
 
 import cn.mcbeserver.wildrnesssurvival.em.Skill;
-import cn.mcbeserver.wildrnesssurvival.inventorys.BeltInventory;
-import cn.mcbeserver.wildrnesssurvival.utils.BeltInfo;
-import cn.mcbeserver.wildrnesssurvival.utils.BeltsManager;
-import cn.mcbeserver.wildrnesssurvival.utils.PlayerManager;
+import cn.mcbeserver.wildrnesssurvival.inventory.BeltInventory;
+import cn.mcbeserver.wildrnesssurvival.util.BeltInfo;
+import cn.mcbeserver.wildrnesssurvival.api.BeltManager;
+import cn.mcbeserver.wildrnesssurvival.api.PlayerManager;
 import de.tr7zw.nbtapi.NBTItem;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -40,18 +40,22 @@ public class MainCommand implements CommandExecutor {
                                         switch (args[2]) {
                                             case "check" -> {
                                                 if (args.length > 3) {
-                                                    OfflinePlayer player1 = Bukkit.getOfflinePlayer(args[3]);
-                                                    if (PlayerManager.isExist(player1)) {
-                                                        int playerLevel = PlayerManager.getLevel(player1, Skill.getSkill(skill));
-                                                        player.sendMessage(
-                                                                WildrnessSurvival.getPrefix() + Message.checkPlayerLevel
-                                                                        .replace("%player%", player1.getName())
-                                                                        .replace("%skill%", Skill.getSkill(skill).getSkillName())
-                                                                        .replace("%level%", String.valueOf(playerLevel))
-                                                                        .replace("%nowexp%", String.valueOf(PlayerManager.getNowAlreadyExp(player1, Skill.getSkill(skill))))
-                                                                        .replace("%upallexp%", String.valueOf(PlayerManager.getUpAllExp(player1, Skill.getSkill(skill)))));
+                                                    if (player.hasPermission("ws.admin")) {
+                                                        OfflinePlayer player1 = Bukkit.getOfflinePlayer(args[3]);
+                                                        if (PlayerManager.isExist(player1)) {
+                                                            int playerLevel = PlayerManager.getLevel(player1, Skill.getSkill(skill));
+                                                            player.sendMessage(
+                                                                    WildrnessSurvival.getPrefix() + Message.checkPlayerLevel
+                                                                            .replace("%player%", player1.getName())
+                                                                            .replace("%skill%", Skill.getSkill(skill).getSkillName())
+                                                                            .replace("%level%", String.valueOf(playerLevel))
+                                                                            .replace("%nowexp%", String.valueOf(PlayerManager.getNowExp(player1, Skill.getSkill(skill))))
+                                                                            .replace("%upallexp%", String.valueOf(PlayerManager.getUpAllExp(player1, Skill.getSkill(skill)))));
+                                                        } else {
+                                                            player.sendMessage(WildrnessSurvival.getPrefix() + Message.unknownPlayer);
+                                                        }
                                                     } else {
-                                                        player.sendMessage(WildrnessSurvival.getPrefix() + Message.unknownPlayer);
+                                                        player.sendMessage(WildrnessSurvival.getPrefix() + Message.noPermission);
                                                     }
                                                 } else {
                                                     int playerLevel = PlayerManager.getLevel(player, Skill.getSkill(skill));
@@ -60,7 +64,7 @@ public class MainCommand implements CommandExecutor {
                                                                     .replace("%player%", player.getName())
                                                                     .replace("%skill%", Skill.getSkill(skill).getSkillName())
                                                                     .replace("%level%", String.valueOf(playerLevel))
-                                                                    .replace("%nowexp%", String.valueOf(PlayerManager.getNowAlreadyExp(player, Skill.getSkill(skill))))
+                                                                    .replace("%nowexp%", String.valueOf(PlayerManager.getNowExp(player, Skill.getSkill(skill))))
                                                                     .replace("%upallexp%", String.valueOf(PlayerManager.getUpAllExp(player, Skill.getSkill(skill)))));
                                                 }
                                                 return false;
@@ -83,6 +87,33 @@ public class MainCommand implements CommandExecutor {
                                                 return false;
                                             }
                                             case "remove" -> {
+                                                if (player.hasPermission("ws.admin")) {
+                                                    if (args.length > 4) {
+                                                        OfflinePlayer player1 = Bukkit.getOfflinePlayer(args[3]);
+                                                        if (PlayerManager.isExist(player1)) {
+                                                            int playerNowExp = PlayerManager.getExp(player1, Skill.getSkill(skill));
+                                                            int removeExp = Integer.parseInt(args[4]);
+                                                            if (playerNowExp - removeExp < 0) {
+                                                                player.sendMessage(WildrnessSurvival.getPrefix() + Message.removeExpFailMinus
+                                                                        .replace("%player%", player1.getName())
+                                                                        .replace("%skill%", Skill.getSkill(skill).getSkillName())
+                                                                );
+                                                            } else {
+                                                                PlayerManager.setExp(player1, Skill.getSkill(skill), playerNowExp - removeExp);
+                                                                player.sendMessage(WildrnessSurvival.getPrefix() + Message.removeExpSuccess
+                                                                        .replace("%player%", player1.getName())
+                                                                        .replace("%skill%", Skill.getSkill(skill).getSkillName())
+                                                                        .replace("%level%", String.valueOf(PlayerManager.getLevel(player1, Skill.getSkill(skill))))
+                                                                        .replace("%nowexp%", String.valueOf(PlayerManager.getNowExp(player1, Skill.getSkill(skill))))
+                                                                        .replace("%upallexp%", String.valueOf(PlayerManager.getUpAllExp(player1, Skill.getSkill(skill)))));
+                                                            }
+                                                        } else {
+                                                            player.sendMessage(WildrnessSurvival.getPrefix() + Message.unknownPlayer);
+                                                        }
+                                                    }
+                                                } else {
+                                                    player.sendMessage(WildrnessSurvival.getPrefix() + Message.noPermission);
+                                                }
                                                 return false;
                                             }
                                             case "set" -> {
@@ -126,7 +157,7 @@ public class MainCommand implements CommandExecutor {
                                             Player player1 = Bukkit.getPlayer(args[2]);
                                             String beltId = args[3];
                                             if (player1 != null) {
-                                                if (BeltsManager.getBeltExist(beltId)) {
+                                                if (BeltManager.isExist(beltId)) {
                                                     BeltInfo beltInfo = new BeltInfo(beltId);
                                                     Material material = Material.getMaterial(beltInfo.getMaterialName());
                                                     ItemStack itemStack = new ItemStack(material);
@@ -169,7 +200,7 @@ public class MainCommand implements CommandExecutor {
                                 WildrnessSurvival.backupAllResources();
                                     player.sendMessage(WildrnessSurvival.getPrefix() + Message.backupSuccess);
                             } catch (IOException e) {
-                                throw new RuntimeException(e);
+                                e.printStackTrace();
                             }
                         }
                         return false;
@@ -184,7 +215,7 @@ public class MainCommand implements CommandExecutor {
                                 WildrnessSurvival.reloadPlugin();
                                 player.sendMessage(WildrnessSurvival.getPrefix() + Message.reloadSuccess);
                             } catch (IOException e) {
-                                throw new RuntimeException(e);
+                                e.printStackTrace();
                             }
                         }
                         return false;
@@ -213,7 +244,7 @@ public class MainCommand implements CommandExecutor {
                                         Player player = Bukkit.getPlayer(args[2]);
                                         String beltId = args[3];
                                         if (player != null) {
-                                            if (BeltsManager.getBeltExist(beltId)) {
+                                            if (BeltManager.isExist(beltId)) {
                                                 BeltInfo beltInfo = new BeltInfo(beltId);
                                                 Material material = Material.getMaterial(beltInfo.getMaterialName());
                                                 ItemStack itemStack = new ItemStack(material);

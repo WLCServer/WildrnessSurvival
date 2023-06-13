@@ -1,5 +1,7 @@
-package cn.mcbeserver.wildrnesssurvival;
+package cn.mcbeserver.wildrnesssurvival.util;
 
+import cn.mcbeserver.wildrnesssurvival.Message;
+import cn.mcbeserver.wildrnesssurvival.WildrnessSurvival;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -18,7 +20,7 @@ public class AutoBackup {
                 WildrnessSurvival.backupAllResources();
                 Bukkit.broadcastMessage(WildrnessSurvival.getPrefix() + Message.autoBackupSuccess);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
             }
         }, 0, WildrnessSurvival.getInstance().getConfig().getInt("autobackup.time") * 20L);
     }
@@ -30,4 +32,5 @@ public class AutoBackup {
     public static BukkitTask getAutoBackup() {
         return autoBackup;
     }
+
 }
