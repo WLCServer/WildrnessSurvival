@@ -1,6 +1,6 @@
-package cn.mcbeserver.wildrnesssurvival.config;
+package cn.mcwlc.wildrnesssurvival.config;
 
-import cn.mcbeserver.wildrnesssurvival.WildrnessSurvival;
+import cn.mcwlc.wildrnesssurvival.WildrnessSurvival;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;

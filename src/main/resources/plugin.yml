@@ -1,10 +1,10 @@
 name: WildrnessSurvival
 version: '${project.version}'
-main: cn.mcbeserver.wildrnesssurvival.WildrnessSurvival
+main: cn.mcwlc.wildrnesssurvival.WildrnessSurvival
 api-version: 1.13
 authors: [ DongShaoNB ]
 description: WildrnessSurvival
-website: www.dsnbo.cn
+website: www.mcwlc.cn
 depend:
   - NBTAPI
 softdepend:

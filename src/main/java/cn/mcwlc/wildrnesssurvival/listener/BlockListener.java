@@ -1,7 +1,7 @@
-package cn.mcbeserver.wildrnesssurvival.listener;
+package cn.mcwlc.wildrnesssurvival.listener;
 
-import cn.mcbeserver.wildrnesssurvival.em.Skill;
-import cn.mcbeserver.wildrnesssurvival.api.PlayerManager;
+import cn.mcwlc.wildrnesssurvival.em.Skill;
+import cn.mcwlc.wildrnesssurvival.manager.PlayerManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

@@ -1,12 +1,10 @@
-package cn.mcbeserver.wildrnesssurvival.inventory;
+package cn.mcwlc.wildrnesssurvival.inventory;
 
-import cn.mcbeserver.wildrnesssurvival.em.Skill;
-import cn.mcbeserver.wildrnesssurvival.util.BeltInfo;
-import cn.mcbeserver.wildrnesssurvival.api.PlayerManager;
-import de.tr7zw.nbtapi.NBTItem;
+import cn.mcwlc.wildrnesssurvival.manager.BeltManager;
+import cn.mcwlc.wildrnesssurvival.em.Skill;
+import cn.mcwlc.wildrnesssurvival.manager.PlayerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -20,21 +18,9 @@ public class BeltInventory {
     public static void send(Player player) {
 
         Inventory inventory = Bukkit.createInventory(null, 9, "§a§l我的饰品");
-
-            for (String belt : PlayerManager.getBeltsList(player)) {
-                if (!belt.isEmpty()) {
-                    BeltInfo beltInfo = new BeltInfo(belt);
-                    ItemStack itemStack = new ItemStack(Material.getMaterial(beltInfo.getMaterialName()));
-                    ItemMeta itemMeta = itemStack.getItemMeta();
-                    itemMeta.setDisplayName(beltInfo.getBeltName());
-                    itemMeta.setLore(beltInfo.getLore());
-                    itemStack.setItemMeta(itemMeta);
-                    if (beltInfo.isEnchant()) {
-                        itemStack.addUnsafeEnchantment(Enchantment.VANISHING_CURSE, 1);
-                    }
-                    NBTItem nbtItem = new NBTItem(itemStack, true);
-                    nbtItem.setString("beltID", belt);
-                    nbtItem.setBoolean("HideFlags", true);
+            for (String beltId : PlayerManager.getBeltsList(player)) {
+                if (!beltId.isEmpty()) {
+                    ItemStack itemStack = BeltManager.getItemStack(beltId);
                     inventory.addItem(itemStack);
                 }
             }

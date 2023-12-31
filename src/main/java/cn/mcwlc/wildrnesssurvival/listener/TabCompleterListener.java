@@ -1,6 +1,6 @@
-package cn.mcbeserver.wildrnesssurvival.listener;
+package cn.mcwlc.wildrnesssurvival.listener;
 
-import cn.mcbeserver.wildrnesssurvival.api.BeltManager;
+import cn.mcwlc.wildrnesssurvival.manager.BeltManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;

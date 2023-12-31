@@ -1,19 +1,24 @@
-package cn.mcbeserver.wildrnesssurvival.api;
+package cn.mcwlc.wildrnesssurvival.manager;
 
-import cn.mcbeserver.wildrnesssurvival.em.Attribute;
-import cn.mcbeserver.wildrnesssurvival.em.Skill;
-import cn.mcbeserver.wildrnesssurvival.WildrnessSurvival;
-import cn.mcbeserver.wildrnesssurvival.util.BeltInfo;
+import cn.mcwlc.wildrnesssurvival.em.Attribute;
+import cn.mcwlc.wildrnesssurvival.em.Quality;
+import cn.mcwlc.wildrnesssurvival.em.Skill;
+import cn.mcwlc.wildrnesssurvival.WildrnessSurvival;
+import cn.mcwlc.wildrnesssurvival.util.BeltInfo;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 
 /**
@@ -136,50 +141,74 @@ public class PlayerManager {
             try {
                 playerData.save(dataFile);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
             }
         });
     }
 
-    public static HashMap<Attribute, Integer> getPlayerAttribute(Player player) {
-        HashMap<Attribute, Integer> attributeHashMap = new HashMap<>();
-        int health = 0;
-        int attack = 0;
-        int defense = 0;
-        int speed = 0;
+    public static HashMap<Attribute, Double> getPlayerAttribute(Player player) {
+        HashMap<Attribute, Double> attributeHashMap = new HashMap<>();
         List<String> playerBelts = getBeltsList(player);
-        for (String belt : playerBelts) {
-            BeltInfo beltInfo = new BeltInfo(belt);
-            health = health + beltInfo.getHealth();
-            attack = attack + beltInfo.getAttack();
-            defense = defense + beltInfo.getDefense();
-            speed = speed + beltInfo.getSpeed();
+        for (String beltId : playerBelts) {
+            BeltInfo beltInfo = new BeltInfo(beltId);
+            HashMap<Attribute, Double> attributeHashMap2 = beltInfo.getAttribute();
+            for (Attribute attribute: attributeHashMap2.keySet()) {
+                if (attributeHashMap.containsKey(attribute)) {
+                    attributeHashMap.replace(attribute, attributeHashMap.get(attribute) + attributeHashMap2.get(attribute));
+                } else {
+                    attributeHashMap.put(attribute, attributeHashMap2.get(attribute));
+                }
+            }
         }
-        attributeHashMap.put(Attribute.HEALTH, health);
-        attributeHashMap.put(Attribute.ATTACK, attack);
-        attributeHashMap.put(Attribute.DEFENSE, defense);
-        attributeHashMap.put(Attribute.SPEED, speed);
         return attributeHashMap;
     }
 
-    public static HashMap<Attribute, Integer> getBeltsAttribute(List<String> beltList) {
-        HashMap<Attribute, Integer> attributeHashMap = new HashMap<>();
-        int health = 0;
-        int attack = 0;
-        int defense = 0;
-        int speed = 0;
-        for (String belt : beltList) {
-            BeltInfo beltInfo = new BeltInfo(belt);
-            health = health + beltInfo.getHealth();
-            attack = attack + beltInfo.getAttack();
-            defense = defense + beltInfo.getDefense();
-            speed = speed + beltInfo.getSpeed();
-        }
-        attributeHashMap.put(Attribute.HEALTH, health);
-        attributeHashMap.put(Attribute.ATTACK, attack);
-        attributeHashMap.put(Attribute.DEFENSE, defense);
-        attributeHashMap.put(Attribute.SPEED, speed);
-        return attributeHashMap;
+    public static void playPlot(Player player) {
+        Bukkit.getScheduler().runTaskAsynchronously(WildrnessSurvival.getInstance(), () -> {
+            WildrnessSurvival.getInstance().getLogger().info("§a正在给玩家 " + player.getName() + " 播放背景故事!");
+            for (String plotWord : WildrnessSurvival.getInstance().getConfig().getStringList("plot.words")) {
+                int plotWordNumber = plotWord.length();
+                player.sendTitle(plotWord, "", 10, plotWordNumber * 8, 20);
+                Bukkit.getScheduler().runTask(WildrnessSurvival.getInstance(), () -> {
+                    new PotionEffect(PotionEffectType.BLINDNESS, plotWordNumber * 15, 255, false, false).apply(player);
+
+                });
+                try {
+                    Thread.sleep(plotWordNumber * 300L);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (WildrnessSurvival.getInstance().getConfig().getBoolean("plot.teleport.enable")) {
+                Bukkit.getScheduler().runTask(WildrnessSurvival.getInstance(), () -> {
+                    Location location = new Location(Bukkit.getWorld(WildrnessSurvival.getInstance().getConfig().getString("plot.teleport.world")), WildrnessSurvival.getInstance().getConfig().getInt("plot.teleport.x"), WildrnessSurvival.getInstance().getConfig().getInt("plot.teleport.y"), WildrnessSurvival.getInstance().getConfig().getInt("plot.teleport.z"));
+                    player.teleport(location);
+                });
+            }
+            randomParentBelt(player);
+        });
+    }
+
+    public static void randomParentBelt(Player player) {
+        Bukkit.getScheduler().runTaskAsynchronously(WildrnessSurvival.getInstance(), () -> {
+           Random random =  new Random();
+           int randomNumber = random.nextInt(4);
+           String beltId;
+           if (randomNumber == 0) {
+               beltId = "parent_common";
+           } else if (randomNumber == 1) {
+               beltId = "parent_rare";
+           } else if (randomNumber == 2) {
+               beltId = "parent_epic";
+           } else {
+               beltId = "parent_legend";
+           }
+           BeltInfo beltInfo = new BeltInfo(beltId);
+           Quality quality = beltInfo.getQuality();
+           player.getInventory().addItem(BeltManager.getItemStack(beltId));
+               WildrnessSurvival.getInstance().getLogger().info("§a玩家 " + player.getName() + " 随机获得了 %belt% §a!"
+                       .replace("%belt%", quality.getQualityColor() + beltInfo.getBeltName()));
+        });
     }
 
 }

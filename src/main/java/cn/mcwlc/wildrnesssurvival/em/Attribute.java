@@ -1,4 +1,4 @@
-package cn.mcbeserver.wildrnesssurvival.em;
+package cn.mcwlc.wildrnesssurvival.em;
 
 /**
  * @author DongShaoNB
@@ -9,7 +9,10 @@ public enum Attribute {
     HEALTH("health", "生命"),
     ATTACK("attack", "攻击"),
     DEFENSE("defense", "防御"),
-    SPEED("speed", "速度");
+    WALK_SPEED("walk_speed", "行走速度"),
+    CRIT("crit", "暴击率"),
+    CRIT_DAMAGE("crit_damage", "暴击伤害");
+
 
     private final String attributeId;
     private final String attributeName;

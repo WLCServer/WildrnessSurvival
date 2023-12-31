@@ -1,11 +1,14 @@
-package cn.mcbeserver.wildrnesssurvival.util;
+package cn.mcwlc.wildrnesssurvival.util;
 
-import cn.mcbeserver.wildrnesssurvival.WildrnessSurvival;
+import cn.mcwlc.wildrnesssurvival.WildrnessSurvival;
+import cn.mcwlc.wildrnesssurvival.em.Attribute;
+import cn.mcwlc.wildrnesssurvival.em.Quality;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -15,12 +18,9 @@ public class BeltInfo {
 
     private final String materialName;
     private final String beltName;
-    private final boolean enchant;
+    private final Quality quality;
     private final List<String> lore;
-    private final int health;
-    private final int attack;
-    private final int defense;
-    private final int speed;
+    private final HashMap<Attribute, Double> attributeHashMap = new HashMap<>();
 
     public BeltInfo(String beltId) {
         File dataFile = new File(WildrnessSurvival.getInstance().getDataFolder(), "belts.yml");
@@ -28,12 +28,12 @@ public class BeltInfo {
         ConfigurationSection beltData = allBeltData.getConfigurationSection(beltId);
         this.materialName = beltData.getString("material");
         this.beltName = beltData.getString("name");
-        this.enchant = beltData.getBoolean("enchant");
+        this.quality = Quality.getQuality(beltData.getString("quality"));
         this.lore = beltData.getStringList("lore");
-        this.health = beltData.getInt("optionals.health");
-        this.attack = beltData.getInt("optionals.attack");
-        this.defense = beltData.getInt("optionals.defense");
-        this.speed = beltData.getInt("optionals.speed");
+        ConfigurationSection attributeConfig = beltData.getConfigurationSection("optionals");
+        for (String key: attributeConfig.getKeys(false)) {
+            this.attributeHashMap.put(Attribute.getAttribute(key), attributeConfig.getDouble(key));
+        }
     }
 
     public String getMaterialName() {
@@ -44,27 +44,17 @@ public class BeltInfo {
         return beltName;
     }
 
-    public boolean isEnchant() {
-        return enchant;
+    public Quality getQuality() {
+        return quality;
     }
 
     public List<String> getLore() {
         return lore;
     }
 
-    public int getHealth() {
-        return health;
+    public HashMap<Attribute, Double> getAttribute() {
+        return attributeHashMap;
     }
 
-    public int getAttack() {
-        return attack;
-    }
 
-    public int getDefense() {
-        return defense;
-    }
-
-    public int getSpeed() {
-        return speed;
-    }
 }

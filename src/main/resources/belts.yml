@@ -1,15 +1,69 @@
-new:
-  material: IRON_INGOT
-  name: "§6§l萌新护身符"
-  enchant: true
+# 请按格式添加饰品 格式错误插件报错 服毁人亡
+# 注意事项:
+#     饰品ID禁止重复!
+#     饰品的物品Material不区分大小写，但是为了规范请全部大写，空格用下划线代替(_)!
+#     饰品的物品的名称如需添加颜色，请使用原版颜色字符 § !
+#
+# 饰品ID:
+#   material: 饰品显示的物品的ID(大写)
+#   name: "饰品显示的物品的名称"
+#   quality: 饰品品质(可选值: common, rare, epic, legend)
+#                            普通,   稀有,  史诗, 传奇
+#   lore:
+#     - "饰品显示的物品的lore"
+#   optionals:
+#     可选属性: 数值
+#     (目前可选属性有: health, attack, defense, walk_speed, break_speed)
+#                     生命,   攻击,   防御,     行走速度,   挖掘速度
+
+parent_common:
+  material: DIAMOND
+  name: "萌新护身符"
+  quality: common
   lore:
     - ""
-    - " §2萌新的护身符，保佑平平安安"
+    - " §2父母留下的护身符，保佑平平安安"
     - ""
-    - "§f攻击力 +1"
-    - "§f防御力 +1"
   optionals:
-    health: 0
-    attack: 1
-    defense: 1
-    speed: 0
+    health: 1:2
+    attack: 1:2
+    defense: 1:2
+
+parent_rare:
+  material: DIAMOND
+  name: "萌新护身符"
+  quality: rare
+  lore:
+    - ""
+    - " §2父母留下的护身符，保佑平平安安"
+    - ""
+  optionals:
+    health: 1:2.2
+    attack: 1:2.2
+    defense: 1:2.2
+
+parent_epic:
+  material: DIAMOND
+  name: "萌新护身符"
+  quality: epic
+  lore:
+    - ""
+    - " §2父母留下的护身符，保佑平平安安"
+    - ""
+  optionals:
+    health: 1:2.5
+    attack: 1:2.5
+    defense: 1:2.5
+
+parent_legend:
+  material: DIAMOND
+  name: "萌新护身符"
+  quality: legend
+  lore:
+    - ""
+    - " §2父母留下的护身符，保佑平平安安"
+    - ""
+  optionals:
+    health: 1:3
+    attack: 1:3
+    defense: 1:3

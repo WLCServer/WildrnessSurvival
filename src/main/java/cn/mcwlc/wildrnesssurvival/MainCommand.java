@@ -1,21 +1,16 @@
-package cn.mcbeserver.wildrnesssurvival;
+package cn.mcwlc.wildrnesssurvival;
 
-import cn.mcbeserver.wildrnesssurvival.em.Skill;
-import cn.mcbeserver.wildrnesssurvival.inventory.BeltInventory;
-import cn.mcbeserver.wildrnesssurvival.util.BeltInfo;
-import cn.mcbeserver.wildrnesssurvival.api.BeltManager;
-import cn.mcbeserver.wildrnesssurvival.api.PlayerManager;
-import de.tr7zw.nbtapi.NBTItem;
+import cn.mcwlc.wildrnesssurvival.em.Skill;
+import cn.mcwlc.wildrnesssurvival.inventory.BeltInventory;
+import cn.mcwlc.wildrnesssurvival.manager.BeltManager;
+import cn.mcwlc.wildrnesssurvival.manager.PlayerManager;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -45,22 +40,22 @@ public class MainCommand implements CommandExecutor {
                                                         if (PlayerManager.isExist(player1)) {
                                                             int playerLevel = PlayerManager.getLevel(player1, Skill.getSkill(skill));
                                                             player.sendMessage(
-                                                                    WildrnessSurvival.getPrefix() + Message.checkPlayerLevel
+                                                                    WildrnessSurvival.getPREFIX() + Message.getCheckPlayerLevel()
                                                                             .replace("%player%", player1.getName())
                                                                             .replace("%skill%", Skill.getSkill(skill).getSkillName())
                                                                             .replace("%level%", String.valueOf(playerLevel))
                                                                             .replace("%nowexp%", String.valueOf(PlayerManager.getNowExp(player1, Skill.getSkill(skill))))
                                                                             .replace("%upallexp%", String.valueOf(PlayerManager.getUpAllExp(player1, Skill.getSkill(skill)))));
                                                         } else {
-                                                            player.sendMessage(WildrnessSurvival.getPrefix() + Message.unknownPlayer);
+                                                            player.sendMessage(WildrnessSurvival.getPREFIX() + Message.getUnknownPlayer());
                                                         }
                                                     } else {
-                                                        player.sendMessage(WildrnessSurvival.getPrefix() + Message.noPermission);
+                                                        player.sendMessage(WildrnessSurvival.getPREFIX() + Message.getNoPermission());
                                                     }
                                                 } else {
                                                     int playerLevel = PlayerManager.getLevel(player, Skill.getSkill(skill));
                                                     player.sendMessage(
-                                                            WildrnessSurvival.getPrefix() + Message.checkLevel
+                                                            WildrnessSurvival.getPREFIX() + Message.getCheckLevel()
                                                                     .replace("%player%", player.getName())
                                                                     .replace("%skill%", Skill.getSkill(skill).getSkillName())
                                                                     .replace("%level%", String.valueOf(playerLevel))
@@ -78,11 +73,11 @@ public class MainCommand implements CommandExecutor {
                                                             int addExp = Integer.parseInt(args[4]);
                                                             PlayerManager.setExp(player1, Skill.getSkill(skill), playerNowExp + addExp);
                                                         } else {
-                                                            player.sendMessage(WildrnessSurvival.getPrefix() + Message.unknownPlayer);
+                                                            player.sendMessage(WildrnessSurvival.getPREFIX() + Message.getUnknownPlayer());
                                                         }
                                                     }
                                                 } else {
-                                                    player.sendMessage(WildrnessSurvival.getPrefix() + Message.noPermission);
+                                                    player.sendMessage(WildrnessSurvival.getPREFIX() + Message.getNoPermission());
                                                 }
                                                 return false;
                                             }
@@ -94,13 +89,13 @@ public class MainCommand implements CommandExecutor {
                                                             int playerNowExp = PlayerManager.getExp(player1, Skill.getSkill(skill));
                                                             int removeExp = Integer.parseInt(args[4]);
                                                             if (playerNowExp - removeExp < 0) {
-                                                                player.sendMessage(WildrnessSurvival.getPrefix() + Message.removeExpFailMinus
+                                                                player.sendMessage(WildrnessSurvival.getPREFIX() + Message.getRemoveExpFailMinus()
                                                                         .replace("%player%", player1.getName())
                                                                         .replace("%skill%", Skill.getSkill(skill).getSkillName())
                                                                 );
                                                             } else {
                                                                 PlayerManager.setExp(player1, Skill.getSkill(skill), playerNowExp - removeExp);
-                                                                player.sendMessage(WildrnessSurvival.getPrefix() + Message.removeExpSuccess
+                                                                player.sendMessage(WildrnessSurvival.getPREFIX() + Message.getRemoveExpSuccess()
                                                                         .replace("%player%", player1.getName())
                                                                         .replace("%skill%", Skill.getSkill(skill).getSkillName())
                                                                         .replace("%level%", String.valueOf(PlayerManager.getLevel(player1, Skill.getSkill(skill))))
@@ -108,11 +103,11 @@ public class MainCommand implements CommandExecutor {
                                                                         .replace("%upallexp%", String.valueOf(PlayerManager.getUpAllExp(player1, Skill.getSkill(skill)))));
                                                             }
                                                         } else {
-                                                            player.sendMessage(WildrnessSurvival.getPrefix() + Message.unknownPlayer);
+                                                            player.sendMessage(WildrnessSurvival.getPREFIX() + Message.getUnknownPlayer());
                                                         }
                                                     }
                                                 } else {
-                                                    player.sendMessage(WildrnessSurvival.getPrefix() + Message.noPermission);
+                                                    player.sendMessage(WildrnessSurvival.getPREFIX() + Message.getNoPermission());
                                                 }
                                                 return false;
                                             }
@@ -124,27 +119,27 @@ public class MainCommand implements CommandExecutor {
                                                             int setLevel = Integer.parseInt(args[4]);
                                                             PlayerManager.setLevel(player1, Skill.getSkill(skill), setLevel);
                                                         } else {
-                                                            player.sendMessage(WildrnessSurvival.getPrefix() + Message.errorParameters);
+                                                            player.sendMessage(WildrnessSurvival.getPREFIX() + Message.getErrorParameters());
                                                         }
                                                     } else {
-                                                        player.sendMessage(WildrnessSurvival.getPrefix() + Message.unknownPlayer);
+                                                        player.sendMessage(WildrnessSurvival.getPREFIX() + Message.getUnknownPlayer());
                                                     }
                                                 } else {
-                                                    player.sendMessage(WildrnessSurvival.getPrefix() + Message.noPermission);
+                                                    player.sendMessage(WildrnessSurvival.getPREFIX() + Message.getNoPermission());
                                                 }
                                                 return false;
                                             }
                                         }
                                     } else {
-                                        player.sendMessage(WildrnessSurvival.getPrefix() + Message.appointControl);
+                                        player.sendMessage(WildrnessSurvival.getPREFIX() + Message.getAppointControl());
                                         return false;
                                     }
                                 default:
-                                    player.sendMessage(WildrnessSurvival.getPrefix() + Message.skillNotExist);
+                                    player.sendMessage(WildrnessSurvival.getPREFIX() + Message.getSkillNotExist());
                                     return false;
                             }
                         } else {
-                            player.sendMessage(WildrnessSurvival.getPrefix() + Message.appointSkill);
+                            player.sendMessage(WildrnessSurvival.getPREFIX() + Message.getAppointSkill());
                         }
                         return false;
                     }
@@ -158,19 +153,7 @@ public class MainCommand implements CommandExecutor {
                                             String beltId = args[3];
                                             if (player1 != null) {
                                                 if (BeltManager.isExist(beltId)) {
-                                                    BeltInfo beltInfo = new BeltInfo(beltId);
-                                                    Material material = Material.getMaterial(beltInfo.getMaterialName());
-                                                    ItemStack itemStack = new ItemStack(material);
-                                                    ItemMeta itemMeta = itemStack.getItemMeta();
-                                                    itemMeta.setDisplayName(beltInfo.getBeltName());
-                                                    itemMeta.setLore(beltInfo.getLore());
-                                                    itemStack.setItemMeta(itemMeta);
-                                                    if (beltInfo.isEnchant()) {
-                                                        itemStack.addUnsafeEnchantment(Enchantment.VANISHING_CURSE, 1);
-                                                    }
-                                                    NBTItem nbtItem = new NBTItem(itemStack, true);
-                                                    nbtItem.setString("beltID", beltId);
-                                                    nbtItem.setBoolean("HideFlags", true);
+                                                    ItemStack itemStack = BeltManager.getItemStack(beltId);
                                                     player1.getInventory().addItem(itemStack);
                                                 } else {
                                                     WildrnessSurvival.getInstance().getLogger().info("§c无法找到该饰品!");
@@ -179,10 +162,10 @@ public class MainCommand implements CommandExecutor {
                                                 WildrnessSurvival.getInstance().getLogger().info("§c该玩家不在线!");
                                             }
                                         } else {
-                                            player.sendMessage(WildrnessSurvival.getPrefix() + Message.appointBeltId);
+                                            player.sendMessage(WildrnessSurvival.getPREFIX() + Message.getAppointBeltId());
                                         }
                                     } else {
-                                        player.sendMessage(WildrnessSurvival.getPrefix() + Message.noPermission);
+                                        player.sendMessage(WildrnessSurvival.getPREFIX() + Message.getNoPermission());
                                     }
                                 }
                                 case "gui" -> {
@@ -198,7 +181,7 @@ public class MainCommand implements CommandExecutor {
                         if (player.hasPermission("ws.admin")) {
                             try {
                                 WildrnessSurvival.backupAllResources();
-                                    player.sendMessage(WildrnessSurvival.getPrefix() + Message.backupSuccess);
+                                player.sendMessage(WildrnessSurvival.getPREFIX() + Message.getBackupSuccess());
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -209,11 +192,11 @@ public class MainCommand implements CommandExecutor {
                         if (player.hasPermission("ws.admin")) {
                             try {
                                 WildrnessSurvival.backupAllResources();
-                                player.sendMessage(WildrnessSurvival.getPrefix() + Message.backupSuccess);
+                                player.sendMessage(WildrnessSurvival.getPREFIX() + Message.getBackupSuccess());
                                 WildrnessSurvival.updateAllResources();
-                                player.sendMessage(WildrnessSurvival.getPrefix() + Message.updateSuccess);
+                                player.sendMessage(WildrnessSurvival.getPREFIX() + Message.getUpdateSuccess());
                                 WildrnessSurvival.reloadPlugin();
-                                player.sendMessage(WildrnessSurvival.getPrefix() + Message.reloadSuccess);
+                                player.sendMessage(WildrnessSurvival.getPREFIX() + Message.getReloadSuccess());
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -223,14 +206,14 @@ public class MainCommand implements CommandExecutor {
                     case "reload" -> {
                         if (player.hasPermission("ws.admin")) {
                             WildrnessSurvival.reloadPlugin();
-                            player.sendMessage(WildrnessSurvival.getPrefix() + Message.reloadSuccess);
+                            player.sendMessage(WildrnessSurvival.getPREFIX() + Message.getReloadSuccess());
                         } else {
-                            player.sendMessage(WildrnessSurvival.getPrefix() + Message.noPermission);
+                            player.sendMessage(WildrnessSurvival.getPREFIX() + Message.getNoPermission());
                         }
                         return false;
                     }
                     default -> {
-                        player.sendMessage(Message.help);
+                        player.sendMessage(Message.getHelp());
                         return false;
                     }
                 }
@@ -245,19 +228,7 @@ public class MainCommand implements CommandExecutor {
                                         String beltId = args[3];
                                         if (player != null) {
                                             if (BeltManager.isExist(beltId)) {
-                                                BeltInfo beltInfo = new BeltInfo(beltId);
-                                                Material material = Material.getMaterial(beltInfo.getMaterialName());
-                                                ItemStack itemStack = new ItemStack(material);
-                                                ItemMeta itemMeta = itemStack.getItemMeta();
-                                                itemMeta.setDisplayName(beltInfo.getBeltName());
-                                                itemMeta.setLore(beltInfo.getLore());
-                                                itemStack.setItemMeta(itemMeta);
-                                                if (beltInfo.isEnchant()) {
-                                                    itemStack.addUnsafeEnchantment(Enchantment.VANISHING_CURSE, 1);
-                                                }
-                                                NBTItem nbtItem = new NBTItem(itemStack, true);
-                                                nbtItem.setString("beltID", beltId);
-                                                nbtItem.setBoolean("HideFlags", true);
+                                                ItemStack itemStack = BeltManager.getItemStack(beltId);
                                                 player.getInventory().addItem(itemStack);
                                             } else {
                                                 WildrnessSurvival.getInstance().getLogger().info("§c无法找到该饰品!");
@@ -281,18 +252,18 @@ public class MainCommand implements CommandExecutor {
                         }
                     case "reload":
                         WildrnessSurvival.getInstance().reloadConfig();
-                        WildrnessSurvival.getInstance().getLogger().info(Message.reloadSuccess);
+                        WildrnessSurvival.getInstance().getLogger().info(Message.getReloadSuccess());
                     case "help":
                     default:
-                        WildrnessSurvival.getInstance().getLogger().info(Message.help);
+                        WildrnessSurvival.getInstance().getLogger().info(Message.getHelp());
                         return false;
                 }
             }
         } else {
             if (commandSender instanceof Player player) {
-                player.sendMessage(Message.help);
+                player.sendMessage(Message.getHelp());
             } else {
-                WildrnessSurvival.getInstance().getLogger().info(Message.help);
+                WildrnessSurvival.getInstance().getLogger().info(Message.getHelp());
             }
             return false;
         }

@@ -1,4 +1,4 @@
-package cn.mcbeserver.wildrnesssurvival.em;
+package cn.mcwlc.wildrnesssurvival.em;
 
 /**
  * @author DongShaoNB

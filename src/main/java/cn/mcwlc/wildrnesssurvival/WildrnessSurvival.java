@@ -1,13 +1,12 @@
-package cn.mcbeserver.wildrnesssurvival;
+package cn.mcwlc.wildrnesssurvival;
 
-import cn.mcbeserver.wildrnesssurvival.config.MessageConfig;
-import cn.mcbeserver.wildrnesssurvival.listener.BlockListener;
-import cn.mcbeserver.wildrnesssurvival.listener.InventoryListener;
-import cn.mcbeserver.wildrnesssurvival.listener.PlayerListener;
-import cn.mcbeserver.wildrnesssurvival.listener.TabCompleterListener;
-import cn.mcbeserver.wildrnesssurvival.support.PlaceholderSupport;
-import cn.mcbeserver.wildrnesssurvival.util.AutoBackup;
-import cn.mcbeserver.wildrnesssurvival.util.ZipUtils;
+import cn.mcwlc.wildrnesssurvival.listener.*;
+import cn.mcwlc.wildrnesssurvival.manager.BeltManager;
+import cn.mcwlc.wildrnesssurvival.config.MessageConfig;
+import cn.mcwlc.wildrnesssurvival.support.PlaceholderSupport;
+import cn.mcwlc.wildrnesssurvival.util.AutoBackup;
+import cn.mcwlc.wildrnesssurvival.util.ZipUtils;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -23,28 +22,29 @@ import java.util.Objects;
  */
 public final class WildrnessSurvival extends JavaPlugin {
 
-    private static WildrnessSurvival Plugin;
+    @Getter
+    private static WildrnessSurvival instance;
+    @Getter
     private static final String PREFIX = "§b[荒野求生] ";
 
     @Override
     public void onEnable() {
-        Plugin = this;
+        instance = this;
         saveResourceFile();
         registerEvents();
         registerCommands();
         hookSupportPlugins();
         loggerWlcServerFont();
-        if (getConfig().getBoolean("autobackup.enable")) {
+        if (getConfig().getBoolean("auto-backup.enable")) {
             AutoBackup.start();
         }
+        BeltManager.registerBelts();
     }
 
     @Override
     public void onDisable() {
-        if (getConfig().getBoolean("autobackup.enable")) {
-            if (AutoBackup.getAutoBackup() != null) {
-                AutoBackup.stop();
-            }
+        if (AutoBackup.getAutoBackup() != null) {
+            AutoBackup.stop();
         }
     }
 
@@ -72,11 +72,17 @@ public final class WildrnessSurvival extends JavaPlugin {
     public static void reloadPlugin() {
         getInstance().reloadConfig();
         MessageConfig.reloadConfig();
-        Message.reload();
+        if (AutoBackup.getAutoBackup() != null) {
+            AutoBackup.stop();
+            if (getInstance().getConfig().getBoolean("auto-backup.enable")) {
+                AutoBackup.start();
+            }
+        }
     }
 
     public void registerEvents() {
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
+        Bukkit.getPluginManager().registerEvents(new EntityListener(), this);
         Bukkit.getPluginManager().registerEvents(new InventoryListener(), this);
         Bukkit.getPluginManager().registerEvents(new BlockListener(), this);
     }
@@ -92,13 +98,17 @@ public final class WildrnessSurvival extends JavaPlugin {
         }
     }
 
-    public static void backupAllResources() throws IOException {
+    public static void backupAllResources() {
         Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
         String rDate = formatter.format(date);
         String backupFile = getBackupFolder() + rDate + ".zip";
         String[] dIncludeFile = {".zip"};
-        ZipUtils.zip(getInstance().getDataFolder().toString(), backupFile, dIncludeFile);
+        try {
+            ZipUtils.zip(getInstance().getDataFolder().toString(), backupFile, dIncludeFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void updateAllResources() throws IOException {
@@ -107,7 +117,7 @@ public final class WildrnessSurvival extends JavaPlugin {
         getInstance().saveResource("config.yml", true);
         getInstance().saveResource("message.yml", true);
         getInstance().saveResource("playerData/defaultPlayerData.yml", true);
-        File oldConfigFile = new File(getUpdateFolder(),"/config.yml");
+        File oldConfigFile = new File(getUpdateFolder(), "/config.yml");
         File newConfigFile = new File(getInstance().getDataFolder(), "/config.yml");
         File oldMessageFile = new File(getUpdateFolder(), "/message.yml");
         File newMessageFile = new File(getInstance().getDataFolder(), "/message.yml");
@@ -118,17 +128,17 @@ public final class WildrnessSurvival extends JavaPlugin {
         YamlConfiguration oldMessage = YamlConfiguration.loadConfiguration(oldMessageFile);
         YamlConfiguration newMessage = YamlConfiguration.loadConfiguration(newMessageFile);
         YamlConfiguration newPlayerData = YamlConfiguration.loadConfiguration(newPlayerDataFile);
-        for (String key: oldConfig.getKeys(true)) {
+        for (String key : oldConfig.getKeys(true)) {
             newConfig.set(key, oldConfig.get(key));
         }
         newConfig.save(newConfigFile);
-        for (String key: oldMessage.getKeys(true)) {
+        for (String key : oldMessage.getKeys(true)) {
             newMessage.set(key, oldMessage.get(key));
         }
         newMessage.save(newMessageFile);
-        for (File playerDataFile: Objects.requireNonNull(playerDataFileFolder.listFiles())) {
+        for (File playerDataFile : Objects.requireNonNull(playerDataFileFolder.listFiles())) {
             YamlConfiguration playerData = YamlConfiguration.loadConfiguration(playerDataFile);
-            for (String key: newPlayerData.getKeys(true)) {
+            for (String key : newPlayerData.getKeys(true)) {
                 if (playerData.get(key) == null) {
                     playerData.set(key, newPlayerData.get(key));
                     playerData.save(playerDataFile);
@@ -154,11 +164,4 @@ public final class WildrnessSurvival extends JavaPlugin {
         return getInstance().getDataFolder() + "/update/";
     }
 
-    public static String getPrefix() {
-        return PREFIX;
-    }
-
-    public static WildrnessSurvival getInstance() {
-        return Plugin;
-    }
 }

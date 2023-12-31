@@ -1,8 +1,9 @@
-package cn.mcbeserver.wildrnesssurvival.listener;
+package cn.mcwlc.wildrnesssurvival.listener;
 
-import cn.mcbeserver.wildrnesssurvival.WildrnessSurvival;
-import cn.mcbeserver.wildrnesssurvival.api.PlayerManager;
-import cn.mcbeserver.wildrnesssurvival.em.Attribute;
+import cn.mcwlc.wildrnesssurvival.WildrnessSurvival;
+import cn.mcwlc.wildrnesssurvival.manager.BeltManager;
+import cn.mcwlc.wildrnesssurvival.manager.PlayerManager;
+import cn.mcwlc.wildrnesssurvival.em.Attribute;
 import de.tr7zw.nbtapi.NBTItem;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -15,7 +16,6 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -59,10 +59,10 @@ public class InventoryListener implements Listener {
     }
 
     @EventHandler
-    public static void onInventoryClose(InventoryCloseEvent event) throws IOException {
+    public static void onInventoryClose(InventoryCloseEvent event) {
         Inventory inventory = event.getInventory();
         if (event.getPlayer() instanceof Player player) {
-            HashMap<Attribute, Integer> oldPlayerAttributeList = PlayerManager.getPlayerAttribute(player);
+            HashMap<Attribute, Double> oldPlayerAttributeList = PlayerManager.getPlayerAttribute(player);
             if ("§a§l我的饰品".equalsIgnoreCase(event.getPlayer().getOpenInventory().getTitle())) {
                 List<String> beltsList = new ArrayList<>();
                 for (int i = 0; i < 9; i++) {
@@ -77,24 +77,32 @@ public class InventoryListener implements Listener {
                     }
                 }
                 PlayerManager.setBeltsList(player, beltsList);
-                HashMap<Attribute, Integer> playerAttributeList = PlayerManager.getBeltsAttribute(beltsList);
-                String healthChange = "";
-                String attackChange = "";
-                String defenseChange = "";
-                String speedChange = "";
-                if (playerAttributeList.get(Attribute.HEALTH) - oldPlayerAttributeList.get(Attribute.HEALTH) > 0) {
-                    healthChange += "§a+" + (playerAttributeList.get(Attribute.HEALTH) - oldPlayerAttributeList.get(Attribute.HEALTH));
-                } else if (playerAttributeList.get(Attribute.HEALTH) - oldPlayerAttributeList.get(Attribute.HEALTH) < 0) {
-                    healthChange += "§c-" + (oldPlayerAttributeList.get(Attribute.HEALTH) - playerAttributeList.get(Attribute.HEALTH));
-                } else {
-                    healthChange += "§f0";
+                player.sendMessage(WildrnessSurvival.getPREFIX() + "§5你的饰品总属性: ");
+                HashMap<Attribute, Double> newPlayerAttributeList = BeltManager.getBeltsAttribute(beltsList);
+                for (Attribute attribute : newPlayerAttributeList.keySet()) {
+                    if (oldPlayerAttributeList.containsKey(attribute)) {
+                        if (oldPlayerAttributeList.get(attribute).equals(newPlayerAttributeList.get(attribute))) {
+                            if (oldPlayerAttributeList.get(attribute) > newPlayerAttributeList.get(attribute)) {
+                                player.sendMessage(WildrnessSurvival.getPREFIX() + "§5" + attribute.getAttributeName() + ": §6" + newPlayerAttributeList.get(attribute) + " §6(§c%number%§6)"
+                                        .replace("%number%", "-" + (oldPlayerAttributeList.get(attribute) - newPlayerAttributeList.get(attribute))));
+                            } else if (newPlayerAttributeList.get(attribute) > oldPlayerAttributeList.get(attribute)) {
+                                player.sendMessage(WildrnessSurvival.getPREFIX() + "§5" + attribute.getAttributeName() + ": §6" + newPlayerAttributeList.get(attribute) + " §6(§a%number%§6)"
+                                        .replace("%number%", "§a+" + (newPlayerAttributeList.get(attribute) - oldPlayerAttributeList.get(attribute))));
+                            } else {
+                                player.sendMessage(WildrnessSurvival.getPREFIX() + "§5" + attribute.getAttributeName() + ": §6" + newPlayerAttributeList.get(attribute) + " §6(§f%number%§6)"
+                                        .replace("%number%", "+0"));
+                            }
+                        }
+                    } else {
+                        player.sendMessage(WildrnessSurvival.getPREFIX() + "§5" + attribute.getAttributeName() + ": §6" + newPlayerAttributeList.get(attribute) + " §6(§a%number%§6)"
+                                .replace("%number%", "+" + newPlayerAttributeList.get(attribute)));
+                    }
                 }
 
-                player.sendMessage(WildrnessSurvival.getPrefix() + "§a你的饰品总属性: ");
-                player.sendMessage(WildrnessSurvival.getPrefix() + "§a生命: " + playerAttributeList.get(Attribute.HEALTH));
-                player.sendMessage(WildrnessSurvival.getPrefix() + "§a攻击: " + playerAttributeList.get(Attribute.ATTACK));
-                player.sendMessage(WildrnessSurvival.getPrefix() + "§a防御: " + playerAttributeList.get(Attribute.DEFENSE));
-                player.sendMessage(WildrnessSurvival.getPrefix() + "§a速度: " + playerAttributeList.get(Attribute.SPEED));
+                if (PlayerManager.getPlayerAttribute(player).get(Attribute.WALK_SPEED) > 0) {
+                    player.setWalkSpeed(PlayerManager.getPlayerAttribute(player).get(Attribute.WALK_SPEED).floatValue());
+                }
+
             }
         }
     }

@@ -1,8 +1,8 @@
-package cn.mcbeserver.wildrnesssurvival.support;
+package cn.mcwlc.wildrnesssurvival.support;
 
-import cn.mcbeserver.wildrnesssurvival.WildrnessSurvival;
-import cn.mcbeserver.wildrnesssurvival.em.Skill;
-import cn.mcbeserver.wildrnesssurvival.api.PlayerManager;
+import cn.mcwlc.wildrnesssurvival.WildrnessSurvival;
+import cn.mcwlc.wildrnesssurvival.em.Skill;
+import cn.mcwlc.wildrnesssurvival.manager.PlayerManager;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
